@@ -1,4 +1,4 @@
-package pieces;
+package tiles;
 
 import java.awt.Point;
 import java.util.Collection;

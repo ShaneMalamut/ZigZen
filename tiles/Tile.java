@@ -1,8 +1,8 @@
-package pieces;
+package tiles;
 
 import java.awt.Point;
 
-public abstract class Tile implements Component
+public class Tile implements Component
 {
   private Point location;
   private int degrees;
@@ -51,7 +51,12 @@ public abstract class Tile implements Component
   /**
    * Call the connectEdge() method for each edge
    */
-  abstract public int connectEdges();
+  @Override
+  public int connectEdges()
+  {
+    //TODO
+    return 0;
+  }
   
   public void rotate(final Point origin, final int degrees)
   {

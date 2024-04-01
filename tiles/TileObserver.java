@@ -1,4 +1,4 @@
-package pieces;
+package tiles;
 
 public interface TileObserver
 {

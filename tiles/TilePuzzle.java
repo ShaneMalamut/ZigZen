@@ -1,4 +1,4 @@
-package pieces;
+package tiles;
 
 import java.util.ArrayList;
 import java.util.Iterator;
