@@ -90,24 +90,24 @@ public abstract class AbstractApplication extends JApplication implements Action
    */
   protected void handleLoad()
   {
-    String fileName = fileField.getText();
-    PropertyReader in;
-    try
-    {
-      BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-      if (fileName.endsWith("apartments")) in = new ApartmentReader(br);
-      else in = new HouseReader(br);
-
-      getPropertyObserver().reset();
-      in.addObserver(getPropertyObserver());
-      in.readAll();
-    }
-    catch (IOException ioe)
-    {
-      JOptionPane.showMessageDialog(getGUIComponent(), 
-          "There was a problem reading " + fileName,
-          "Error", JOptionPane.ERROR_MESSAGE);
-    }
+//    String fileName = fileField.getText();
+//    PropertyReader in;
+//    try
+//    {
+//      BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
+//      if (fileName.endsWith("apartments")) in = new ApartmentReader(br);
+//      else in = new HouseReader(br);
+//
+//      getPropertyObserver().reset();
+//      in.addObserver(getPropertyObserver());
+//      in.readAll();
+//    }
+//    catch (IOException ioe)
+//    {
+//      JOptionPane.showMessageDialog(getGUIComponent(), 
+//          "There was a problem reading " + fileName,
+//          "Error", JOptionPane.ERROR_MESSAGE);
+//    }
   }
   
   /**
@@ -116,13 +116,6 @@ public abstract class AbstractApplication extends JApplication implements Action
    * @return The JComponent
    */
   protected abstract JComponent getGUIComponent();
-  
-  /**
-   * Get the PropertyObserver to inform of changes.
-   * 
-   * @return The PropertyObserver
-   */
-  protected abstract PropertyObserver getPropertyObserver();
   
   /**
    * Initialize this JApplication (required by JApplication).

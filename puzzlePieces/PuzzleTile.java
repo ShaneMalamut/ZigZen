@@ -1,14 +1,14 @@
-package tiles;
+package puzzlePieces;
 
 import java.awt.Point;
 
-public class Tile implements Component
+public class PuzzleTile implements Component
 {
   private Point location;
   private int degrees;
   
   
-  public Tile()
+  public PuzzleTile()
   {
     // Should start with a random rotation, random position?, and 10% of being "flipped over". 
     // Scroll wheel to rotate a tile while it is picked up
@@ -23,23 +23,23 @@ public class Tile implements Component
     this(new Point(), 0);
   }
   
-  public Tile(final Point location)
+  public PuzzleTile(final Point location)
   {
     this(location, 0);
   }
   
-  public Tile(final int rotation)
+  public PuzzleTile(final int rotation)
   {
     this(new Point(), rotation);
   }
   
-  public Tile(final Point location, final int rotation)
+  public PuzzleTile(final Point location, final int rotation)
   {
     this.location = location;
     degrees = 0;
   }
   
-  public int connectEdge(final Tile tile)
+  public int connectEdge(final PuzzleTile tile)
   {
     //TODO math stuff
     //check the side for valid connections (is the matching tiles nearby with the right rotation?),
@@ -51,7 +51,6 @@ public class Tile implements Component
   /**
    * Call the connectEdge() method for each edge
    */
-  @Override
   public int connectEdges()
   {
     //TODO

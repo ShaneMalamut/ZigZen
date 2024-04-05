@@ -1,4 +1,4 @@
-package tiles;
+package puzzlePieces;
 
 import java.awt.Point;
 import java.util.Collection;
@@ -60,5 +60,12 @@ public class Composite implements Component
     {
       c.translate(x, y);
     }
+  }
+
+  @Override
+  public int connectEdges()
+  {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }

@@ -1,4 +1,4 @@
-package tiles.io;
+package puzzlePieces.io;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.ResourceFinder;
-import tiles.Tile;
-import tiles.TilePuzzle;
+import puzzlePieces.PuzzleTile;
+import puzzlePieces.Puzzle;
 import visual.statik.sampled.ImageFactory;
 
 /**
@@ -20,7 +20,7 @@ import visual.statik.sampled.ImageFactory;
  * 
  *          This work complies with the JMU Honor Code.
  */
-public class TilePuzzleFactory
+public class PuzzleFactory
 {
   private ImageFactory imageFactory;
   
@@ -29,7 +29,7 @@ public class TilePuzzleFactory
   /**
    * Default Constructor.
    */
-  public TilePuzzleFactory()
+  public PuzzleFactory()
   {
     imageFactory = new ImageFactory();
   }
@@ -39,7 +39,7 @@ public class TilePuzzleFactory
    *
    * @param finder   The ResourceFinder to use (if needed)
    */
-  public TilePuzzleFactory(ResourceFinder finder)
+  public PuzzleFactory(ResourceFinder finder)
   {
     imageFactory = new ImageFactory(finder);
   }
@@ -53,9 +53,9 @@ public class TilePuzzleFactory
    * @param cols        The number of columns
    * @return            The TilePuzzle
    */
-  public TilePuzzle createTilePuzzle(BufferedImage image, String description, int rows, int cols)
+  public Puzzle createTilePuzzle(BufferedImage image, String description, int rows, int cols)
   {
-    TilePuzzle puzzle = new TilePuzzle(description);
+    Puzzle puzzle = new Puzzle(description);
     
     int height = image.getHeight();
     int width  = image.getWidth();
@@ -66,13 +66,13 @@ public class TilePuzzleFactory
     int hMaxTabLength = (int) (tileHeight * TAB_LENGTH_PERCENTAGE); // Left/right faces
     int vMaxTabLength = (int) (tileWidth * TAB_LENGTH_PERCENTAGE);  // Top/bottom faces
     
-    List<Tile> tiles = new ArrayList<Tile>();
+    List<PuzzleTile> tiles = new ArrayList<PuzzleTile>();
     
     for (int r = 0; r < rows; r++)
     {
       for (int c = 0; c < cols; c++)
       {
-        tiles.add(new Tile());
+        tiles.add(new PuzzleTile());
       }
     }
     
@@ -92,7 +92,7 @@ public class TilePuzzleFactory
    * @param rows        The number of rows
    * @return            The TilePuzzle
    */
-  public TilePuzzle createTilePuzzle(BufferedImage image, String description, int rows)
+  public Puzzle createTilePuzzle(BufferedImage image, String description, int rows)
   {
     int height = image.getHeight();
     int width  = image.getWidth();
@@ -112,7 +112,7 @@ public class TilePuzzleFactory
    * @param cols         The number of columns
    * @return             The TilePuzzle
    */
-  public TilePuzzle createTilePuzzle(Image image, String description, int rows, int cols)
+  public Puzzle createTilePuzzle(Image image, String description, int rows, int cols)
   {
     BufferedImage bi;
 
@@ -131,7 +131,7 @@ public class TilePuzzleFactory
    * @param rows         The number of rows
    * @return             The TilePuzzle
    */
-  public TilePuzzle createTilePuzzle(Image image, String description, int rows)
+  public Puzzle createTilePuzzle(Image image, String description, int rows)
   {
     BufferedImage bi;
 
@@ -150,7 +150,7 @@ public class TilePuzzleFactory
    * @param cols         The number of columns
    * @return             The TilePuzzle
    */
-  public TilePuzzle createTilePuzzle(String name, String description, int rows, int cols)
+  public Puzzle createTilePuzzle(String name, String description, int rows, int cols)
   {
     BufferedImage          bi;
 
@@ -171,7 +171,7 @@ public class TilePuzzleFactory
    * @param cols         The number of columns
    * @return             The TilePuzzle
    */
-  public TilePuzzle createTilePuzzle(String name, String description, int rows)
+  public Puzzle createTilePuzzle(String name, String description, int rows)
   {
     BufferedImage          bi;
 

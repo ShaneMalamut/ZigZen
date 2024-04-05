@@ -1,21 +1,21 @@
-package tiles;
+package puzzlePieces;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TilePuzzle implements Iterable<Tile>, TileObserver
+public class Puzzle implements Iterable<PuzzleTile>, TileObserver
 {
   protected String description;
-  protected List<Tile> tiles;
+  protected List<PuzzleTile> tiles;
   
-  public TilePuzzle(String description)
+  public Puzzle(String description)
   {
     this.description = description;
-    tiles = new ArrayList<Tile>();
+    tiles = new ArrayList<PuzzleTile>();
   }
   
-  public void add(Tile tile)
+  public void add(PuzzleTile tile)
   {
     if (tile != null) tiles.add(tile);
   }
@@ -25,19 +25,19 @@ public class TilePuzzle implements Iterable<Tile>, TileObserver
     return description;
   }
   
-  public Tile getElement(int index)
+  public PuzzleTile getElement(int index)
   {
     return tiles.get(index);
   }
   
   @Override
-  public void handleTile(Tile tile)
+  public void handleTile(PuzzleTile tile)
   {
     add(tile);
   }
   
   @Override
-  public Iterator<Tile> iterator()
+  public Iterator<PuzzleTile> iterator()
   {
     return tiles.iterator();
   }

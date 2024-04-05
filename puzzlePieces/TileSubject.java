@@ -1,8 +1,8 @@
-package tiles;
+package puzzlePieces;
 
 public interface TileSubject
 {
   public void addObserver(TileObserver observer);
-  public void notifyObservers(Tile tile);
+  public void notifyObservers(PuzzleTile tile);
   public void removeObserver(TileObserver observer);
 }

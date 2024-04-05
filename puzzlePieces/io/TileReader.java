@@ -1,4 +1,4 @@
-package tiles.io;
+package puzzlePieces.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import tiles.Tile;
-import tiles.TileObserver;
-import tiles.TileSubject;
+import puzzlePieces.PuzzleTile;
+import puzzlePieces.TileObserver;
+import puzzlePieces.TileSubject;
 
 /**
  * An abstract class for reading Tile information from a BufferedReader.
@@ -51,11 +51,11 @@ public abstract class TileReader implements TileSubject
   /**
    * Notify all registered TileObserver objects of a change (required by TileSubject).
    *
-   * @param Tile
+   * @param PuzzleTile
    *          The new/changed Tile
    */
   @Override
-  public void notifyObservers(final Tile tile)
+  public void notifyObservers(final PuzzleTile tile)
   {
     Iterator<TileObserver> i = observers.iterator();
     while (i.hasNext())
@@ -82,7 +82,7 @@ public abstract class TileReader implements TileSubject
    *
    * @return The next Tile object
    */
-  protected abstract Tile readTile()
+  protected abstract PuzzleTile readTile()
       throws IOException, NoSuchElementException, NumberFormatException;
 
   /**
@@ -95,7 +95,7 @@ public abstract class TileReader implements TileSubject
    */
   public void readOne() throws IOException
   {
-    Tile tile = readTile();
+    PuzzleTile tile = readTile();
     if (tile != null)
       notifyObservers(tile);
   }
@@ -110,7 +110,7 @@ public abstract class TileReader implements TileSubject
    */
   public void readAll() throws IOException
   {
-    Tile tile;
+    PuzzleTile tile;
 
     while ((tile = readTile()) != null)
     {
