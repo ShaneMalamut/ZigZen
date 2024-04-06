@@ -1,0 +1,13 @@
+ZigZen version 1.0
+Created by Shane Malamut
+
+ZigZen is a software application entertainment product designed to 
+simulate the experience of completing a jigsaw puzzle. Emphasis is 
+placed on creating an experience accurate to real life, in order 
+to capture the relaxing feeling associated with completing a real 
+jigsaw puzzle. The product leverages strengths of a computer 
+environment to allow for quality-of-life and ease-of-use features 
+not possible in a real jigsaw puzzle. However, the product is 
+careful not to include any overly-flashy features that would 
+distract from the experience. Although intended as an entertainment 
+product, ZigZen is a simulation first and a computer game second. 

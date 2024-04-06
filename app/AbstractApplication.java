@@ -82,7 +82,7 @@ public abstract class AbstractApplication extends JApplication implements Action
   protected void handleAbout()
   {
     JOptionPane.showMessageDialog(getGUIComponent(), 
-        aboutText, ABOUT, JOptionPane.INFORMATION_MESSAGE);
+        String.format(aboutText, aboutText), ABOUT, JOptionPane.INFORMATION_MESSAGE);
   }
   
   /**
