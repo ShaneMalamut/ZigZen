@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Puzzle implements Iterable<PuzzleTile>, TileObserver
+public class Puzzle implements Iterable<PuzzleTile>
 {
   protected String description;
   protected List<PuzzleTile> tiles;
@@ -30,7 +30,6 @@ public class Puzzle implements Iterable<PuzzleTile>, TileObserver
     return tiles.get(index);
   }
   
-  @Override
   public void handleTile(PuzzleTile tile)
   {
     add(tile);
@@ -42,7 +41,6 @@ public class Puzzle implements Iterable<PuzzleTile>, TileObserver
     return tiles.iterator();
   }
   
-  @Override
   public void reset()
   {
     tiles.clear();
@@ -51,5 +49,17 @@ public class Puzzle implements Iterable<PuzzleTile>, TileObserver
   public int size()
   {
     return tiles.size();
+  }
+
+  /**
+   * Constructs an empty Puzzle object from a String representation.
+   * Does not include the individual PuzzleTiles.
+   * @param line The String representation
+   * @return     The Puzzle
+   */
+  public static Puzzle parsePuzzle(final String line)
+  {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import io.ResourceFinder;
+import puzzlePieces.Puzzle;
+import puzzlePieces.io.PuzzleReader;
 import resources.Marker;
 
 public abstract class AbstractApplication extends JApplication implements ActionListener
@@ -90,24 +92,27 @@ public abstract class AbstractApplication extends JApplication implements Action
    */
   protected void handleLoad()
   {
-//    String fileName = fileField.getText();
-//    PropertyReader in;
-//    try
-//    {
-//      BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-//      if (fileName.endsWith("apartments")) in = new ApartmentReader(br);
-//      else in = new HouseReader(br);
-//
-//      getPropertyObserver().reset();
-//      in.addObserver(getPropertyObserver());
-//      in.readAll();
-//    }
-//    catch (IOException ioe)
-//    {
-//      JOptionPane.showMessageDialog(getGUIComponent(), 
-//          "There was a problem reading " + fileName,
-//          "Error", JOptionPane.ERROR_MESSAGE);
-//    }
+    String fileName = fileField.getText();
+    Puzzle puzzle = null;
+    try
+    {
+      BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
+      if (isImageFile(fileName))
+      {
+        PuzzleReader in = new PuzzleReader(br);
+        puzzle = in.read();
+      }
+      else
+      {
+        
+      }
+    }
+    catch (IOException ioe)
+    {
+      JOptionPane.showMessageDialog(getGUIComponent(), 
+          "There was a problem reading " + fileName,
+          "Error", JOptionPane.ERROR_MESSAGE);
+    }
   }
   
   /**
@@ -149,5 +154,17 @@ public abstract class AbstractApplication extends JApplication implements Action
     JComponent component = getGUIComponent();
     component.setBounds(0, 60, WIDTH, HEIGHT-60);
     contentPane.add(component);
+  }
+  
+  private boolean isImageFile(final String fileName)
+  {
+    String[] imageExtensions = {".jpeg", ".jpg", ".png", ".bmp", ".webmp", ".gif"};
+    
+    for (int i = 0; i < imageExtensions.length; i++)
+    {
+      if (fileName.toLowerCase().endsWith(imageExtensions[i])) return true;
+    }
+    
+    return false;
   }
 }

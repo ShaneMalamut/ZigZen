@@ -73,4 +73,15 @@ public class PuzzleTile implements Component
     int y = end.y - start.y;
     translate(x,y);
   }
+
+  /**
+   * Constructs a PuzzleTile object from a String representation.
+   * @param line The String representation
+   * @return     The PuzzleTile
+   */
+  public static PuzzleTile parsePuzzleTile(final String line)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }
