@@ -1,6 +1,7 @@
 package puzzlePieces;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 
 public class PuzzleTile implements Component
 {
@@ -39,6 +40,11 @@ public class PuzzleTile implements Component
     degrees = 0;
   }
   
+  public PuzzleTile(int row, int col, int tileHeight, int tileWidth, BufferedImage subimage)
+  {
+    // TODO Auto-generated constructor stub
+  }
+
   public int connectEdge(final PuzzleTile tile)
   {
     //TODO math stuff

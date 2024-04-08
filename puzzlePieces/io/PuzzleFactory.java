@@ -2,8 +2,14 @@ package puzzlePieces.io;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import io.ResourceFinder;
 import puzzlePieces.PuzzleTile;
@@ -65,18 +71,26 @@ public class PuzzleFactory
 
     int hMaxTabLength = (int) (tileHeight * TAB_LENGTH_PERCENTAGE); // Left/right faces
     int vMaxTabLength = (int) (tileWidth * TAB_LENGTH_PERCENTAGE);  // Top/bottom faces
-    
-    List<PuzzleTile> tiles = new ArrayList<PuzzleTile>();
+
+    System.out.println(String.format("Height: %d", height));
+    System.out.println(String.format("Width:  %d", width));
+    System.out.println(String.format("rows:   %d", rows));
+    System.out.println(String.format("cols:   %d", cols));
+        
+    int w = tileWidth+2*hMaxTabLength;
+    int h = tileHeight+2*vMaxTabLength;
     
     for (int r = 0; r < rows; r++)
     {
+      int y = r*tileHeight-vMaxTabLength;
+      
       for (int c = 0; c < cols; c++)
       {
-        tiles.add(new PuzzleTile());
+        int x = c*tileWidth-hMaxTabLength;
+        
+        puzzle.add(new PuzzleTile(r, c, tileHeight, tileWidth, image.getSubimage(x, y, w, h)));
       }
     }
-    
-    image.getSubimage(vMaxTabLength, hMaxTabLength, tileWidth, vMaxTabLength);
     
     return puzzle;
   }
@@ -173,10 +187,20 @@ public class PuzzleFactory
    */
   public Puzzle createPuzzle(String name, String description, int rows)
   {
-    BufferedImage          bi;
-
+    BufferedImage bi;
     //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
-    bi = imageFactory.createBufferedImage(name, 4);
+
+    bi = null;
+    
+    try
+    {
+      bi = ImageIO.read(new File(name));
+    }
+    catch (IOException io)
+    {
+      bi = null;
+    }
+    
     return createPuzzle(bi, description, rows);
   }
 }
