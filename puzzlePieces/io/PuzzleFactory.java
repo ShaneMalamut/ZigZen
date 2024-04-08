@@ -12,7 +12,7 @@ import visual.statik.sampled.ImageFactory;
 
 /**
  * A utility class for constructing/creating 
- * TilePuzzle objects.
+ * Puzzle objects.
  *
  * @author  Shane Malamut, James Madison University
  *          Based on visual.statik.sampled.ContentFactory by Prof. David Bernstein
@@ -45,15 +45,15 @@ public class PuzzleFactory
   }
 
   /**
-   * Create a TilePuzzle from a BufferedImage.
+   * Create a Puzzle from a BufferedImage.
    *
    * @param image       The BufferedImage
    * @param description The name or description associated with the puzzle
    * @param rows        The number of rows
    * @param cols        The number of columns
-   * @return            The TilePuzzle
+   * @return            The Puzzle
    */
-  public Puzzle createTilePuzzle(BufferedImage image, String description, int rows, int cols)
+  public Puzzle createPuzzle(BufferedImage image, String description, int rows, int cols)
   {
     Puzzle puzzle = new Puzzle(description);
     
@@ -82,7 +82,7 @@ public class PuzzleFactory
   }
   
   /**
-   * Create a TilePuzzle from a BufferedImage,
+   * Create a Puzzle from a BufferedImage,
    * with column number determined based on rows and image size
    * to result in square tiles.
    *
@@ -90,9 +90,9 @@ public class PuzzleFactory
    * @param tabWidth    The distance each "tab" should protrude from the tile
    * @param description The name or description associated with the puzzle
    * @param rows        The number of rows
-   * @return            The TilePuzzle
+   * @return            The Puzzle
    */
-  public Puzzle createTilePuzzle(BufferedImage image, String description, int rows)
+  public Puzzle createPuzzle(BufferedImage image, String description, int rows)
   {
     int height = image.getHeight();
     int width  = image.getWidth();
@@ -100,67 +100,67 @@ public class PuzzleFactory
     int tileHeight = height/rows;
     int cols = width/tileHeight;
     
-    return createTilePuzzle(image, description, rows, cols);
+    return createPuzzle(image, description, rows, cols);
   }
   
   /**
-   * Create a TilePuzzle from an Image.
+   * Create a Puzzle from an Image.
    *
    * @param image        The original Image
    * @param description  The name or description associated with the puzzle
    * @param rows         The number of rows
    * @param cols         The number of columns
-   * @return             The TilePuzzle
+   * @return             The Puzzle
    */
-  public Puzzle createTilePuzzle(Image image, String description, int rows, int cols)
+  public Puzzle createPuzzle(Image image, String description, int rows, int cols)
   {
     BufferedImage bi;
 
     //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
     bi = imageFactory.createBufferedImage(image, 4);
-    return createTilePuzzle(bi, description, rows, cols);
+    return createPuzzle(bi, description, rows, cols);
   }
   
   /**
-   * Create a TilePuzzle from an Image,
+   * Create a Puzzle from an Image,
    * with column number determined based on rows and image size
    * to result in square tiles.
    *
    * @param image        The original Image
    * @param description  The name or description associated with the puzzle
    * @param rows         The number of rows
-   * @return             The TilePuzzle
+   * @return             The Puzzle
    */
-  public Puzzle createTilePuzzle(Image image, String description, int rows)
+  public Puzzle createPuzzle(Image image, String description, int rows)
   {
     BufferedImage bi;
 
     //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
     bi = imageFactory.createBufferedImage(image, 4);
-    return createTilePuzzle(bi, description, rows);
+    return createPuzzle(bi, description, rows);
   }
 
   /**
-   * Create a TilePuzzle from a file/resource
+   * Create a Puzzle from a file/resource
    * containing an Image.
    *
    * @param name         The name of the file/resource
    * @param description  The name or description associated with the puzzle
    * @param rows         The number of rows
    * @param cols         The number of columns
-   * @return             The TilePuzzle
+   * @return             The Puzzle
    */
-  public Puzzle createTilePuzzle(String name, String description, int rows, int cols)
+  public Puzzle createPuzzle(String name, String description, int rows, int cols)
   {
     BufferedImage          bi;
 
     //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
     bi = imageFactory.createBufferedImage(name, 4);
-    return createTilePuzzle(bi, description, rows, cols);
+    return createPuzzle(bi, description, rows, cols);
   }
   
   /**
-   * Create a TilePuzzle from a file/resource
+   * Create a Puzzle from a file/resource
    * containing an Image,
    * with column number determined based on rows and image size
    * to result in square tiles.
@@ -169,14 +169,14 @@ public class PuzzleFactory
    * @param description  The name or description associated with the puzzle
    * @param rows         The number of rows
    * @param cols         The number of columns
-   * @return             The TilePuzzle
+   * @return             The Puzzle
    */
-  public Puzzle createTilePuzzle(String name, String description, int rows)
+  public Puzzle createPuzzle(String name, String description, int rows)
   {
     BufferedImage          bi;
 
     //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
     bi = imageFactory.createBufferedImage(name, 4);
-    return createTilePuzzle(bi, description, rows);
+    return createPuzzle(bi, description, rows);
   }
 }

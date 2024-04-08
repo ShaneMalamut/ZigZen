@@ -1,5 +1,6 @@
 package app;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ import puzzlePieces.Puzzle;
 import puzzlePieces.io.PuzzleFactory;
 import puzzlePieces.io.PuzzleReader;
 import resources.Marker;
+import visual.VisualizationView;
 
 public class ZigZenApplication extends JApplication implements ActionListener
 {
@@ -30,6 +32,8 @@ public class ZigZenApplication extends JApplication implements ActionListener
 
   protected static final String ABOUT = "About";
   protected static final String LOAD = "Load";
+
+  private static final Color BACKGROUND_COLOR = new Color(218, 204, 230);
   
   private JButton aboutButton, loadButton;
   private JTextField fileField;
@@ -42,7 +46,7 @@ public class ZigZenApplication extends JApplication implements ActionListener
    */
   public ZigZenApplication(final String[] args)
   {
-super(args, WIDTH, HEIGHT);
+    super(args, WIDTH, HEIGHT);
     
     ResourceFinder rf = ResourceFinder.createInstance(new Marker());
     InputStream    is = rf.findInputStream("about.txt");
@@ -141,6 +145,7 @@ super(args, WIDTH, HEIGHT);
     // Setup the content pane
     JPanel contentPane = (JPanel)getContentPane();
     contentPane.setLayout(null);
+    contentPane.setBackground(BACKGROUND_COLOR);
 
     JLabel label = new JLabel("File: ");
     label.setBounds(30, 30, 40, 30);
