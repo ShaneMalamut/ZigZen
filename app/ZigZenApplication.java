@@ -3,6 +3,7 @@ package app;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,6 +25,7 @@ import puzzlePieces.io.PuzzleFactory;
 import puzzlePieces.io.PuzzleReader;
 import resources.Marker;
 import visual.VisualizationView;
+import visual.statik.sampled.ImageFactory;
 
 public class ZigZenApplication extends JApplication implements ActionListener
 {
@@ -106,16 +108,15 @@ public class ZigZenApplication extends JApplication implements ActionListener
       BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
       if (isImageFile(fileName))
       {
-        puzzle = PuzzleReader.read(br);
+        PuzzleFactory pf = new PuzzleFactory();
+        puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", 10);
       }
       else
       {
-        PuzzleFactory pf = new PuzzleFactory();
-        //TODO go to puzzle configuration
-        //TODO construct puzzle
+        puzzle = PuzzleReader.read(br);
       }
       
-      //TODO go to puzzleBoard
+      puzzleBoard.setPuzzle(puzzle);
     }
     catch (IOException ioe)
     {
