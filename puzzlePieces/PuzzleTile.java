@@ -6,43 +6,30 @@ import java.awt.image.BufferedImage;
 public class PuzzleTile implements Component
 {
   private Point location;
-  private int degrees;
+  private int row;
+  private int col;
+  private int tileHeight;
+  private int tileWidth;
+  private BufferedImage image;
   
+//Should start with a random rotation, random position?, and 10% of being "flipped over". 
+  // Scroll wheel to rotate a tile while it is picked up
+  // Scroll wheel to zoom in and out while you are not holding a tile
+  // Hold right click to pan the screen
+  // Clicking a face-down tile flips it over
+  // Clicking a face-up tile picks it up
+  // - Clicking again drops it
   
-  public PuzzleTile()
+  // All held tiles should check for connections at each tick interval
+  // Tiles should be divided into grid cells for performance reasons
+  public PuzzleTile(int row, int col, int tileHeight, int tileWidth, BufferedImage image)
   {
-    // Should start with a random rotation, random position?, and 10% of being "flipped over". 
-    // Scroll wheel to rotate a tile while it is picked up
-    // Scroll wheel to zoom in and out while you are not holding a tile
-    // Hold right click to pan the screen
-    // Clicking a face-down tile flips it over
-    // Clicking a face-up tile picks it up
-    // - Clicking again drops it
-    
-    // All held tiles should check for connections at each tick interval
-    // Tiles should be divided into grid cells for performance reasons
-    this(new Point(), 0);
-  }
-  
-  public PuzzleTile(final Point location)
-  {
-    this(location, 0);
-  }
-  
-  public PuzzleTile(final int rotation)
-  {
-    this(new Point(), rotation);
-  }
-  
-  public PuzzleTile(final Point location, final int rotation)
-  {
-    this.location = location;
-    degrees = 0;
-  }
-  
-  public PuzzleTile(int row, int col, int tileHeight, int tileWidth, BufferedImage subimage)
-  {
-    // TODO Auto-generated constructor stub
+    this.row = row;
+    this.col = col;
+    this.tileHeight = tileHeight;
+    this.tileWidth = tileWidth;
+    this.image = image;
+    this.location = new Point(0,0);
   }
 
   public int connectEdge(final PuzzleTile tile)
@@ -61,6 +48,36 @@ public class PuzzleTile implements Component
   {
     //TODO
     return 0;
+  }
+  
+  public BufferedImage getImage()
+  {
+    return image;
+  }
+  
+  public Point getLocation()
+  {
+    return location;
+  }
+  
+  public double getLeft()
+  {
+    return location.getX();
+  }
+  
+  public double getTop()
+  {
+    return location.getY();
+  }
+  
+  public double getWidth()
+  {
+    return tileWidth;
+  }
+  
+  public double getHeight()
+  {
+    return tileHeight;
   }
   
   public void rotate(final Point origin, final int degrees)

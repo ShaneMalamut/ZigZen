@@ -83,10 +83,14 @@ public class PuzzleFactory
     for (int r = 0; r < rows; r++)
     {
       int y = r*tileHeight-vMaxTabLength;
+      if (y < 0) y = 0;
+      if (y > height - h) y = height - h;
       
       for (int c = 0; c < cols; c++)
       {
         int x = c*tileWidth-hMaxTabLength;
+        if (x < 0) x = 0;
+        if (x > width - w) x = width - w;
         
         puzzle.add(new PuzzleTile(r, c, tileHeight, tileWidth, image.getSubimage(x, y, w, h)));
       }

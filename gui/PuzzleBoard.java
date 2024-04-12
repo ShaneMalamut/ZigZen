@@ -7,11 +7,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
 import io.ResourceFinder;
 import puzzlePieces.Puzzle;
+import puzzlePieces.PuzzleTile;
+import puzzlePieces.visual.PuzzleTileContent;
 import resources.Marker;
 import visual.VisualizationView;
 import visual.dynamic.described.DescribedSprite;
@@ -24,7 +27,7 @@ import visual.statik.sampled.ContentFactory;
 public class PuzzleBoard extends Stage
 {
   private static final Color BACKGROUND_COLOR = new Color(244, 239, 225);
-  private static final int   TIME_STEP        = 100;
+  private static final int   TIME_STEP        = 15;
   
   private Content        watermark;
   private BufferedImage  watermarkTransparent;
@@ -48,6 +51,8 @@ public class PuzzleBoard extends Stage
     view.setBackground(BACKGROUND_COLOR);
     
     handleWatermark(width, height);
+    
+    start();
   }
   
   private void handleWatermark(final int width, final int height)
@@ -107,5 +112,14 @@ public class PuzzleBoard extends Stage
     
     //Switch to transparent watermark when puzzle is displayed
     watermark.setImage(watermarkTransparent);
+
+    ContentFactory tcFactory = new ContentFactory();
+    for (PuzzleTile tile : puzzle)
+    {
+      TransformableContent content = tcFactory.createContent(tile.getImage());
+      PuzzleTileContent tileContent = new PuzzleTileContent(content, tile);
+      add(tileContent);
+      addMouseMotionListener(tileContent);
+    }
   }
 }
