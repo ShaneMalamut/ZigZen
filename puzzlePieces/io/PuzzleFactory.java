@@ -1,5 +1,6 @@
 package puzzlePieces.io;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -71,6 +72,10 @@ public class PuzzleFactory
 
     int hMaxTabLength = (int) (tileHeight * TAB_LENGTH_PERCENTAGE); // Left/right faces
     int vMaxTabLength = (int) (tileWidth * TAB_LENGTH_PERCENTAGE);  // Top/bottom faces
+    
+    //temp
+    hMaxTabLength = 0;
+    vMaxTabLength = 0;
 
     System.out.println(String.format("Height: %d", height));
     System.out.println(String.format("Width:  %d", width));
@@ -206,5 +211,53 @@ public class PuzzleFactory
     }
     
     return createPuzzle(bi, description, rows);
+  }
+  
+  /**
+   * Create a Puzzle from a file/resource
+   * containing an Image,
+   * with column number determined based on rows and image size
+   * to result in square tiles,
+   * and a Dimension to scale the image to fit within.
+   *
+   * @param name         The name of the file/resource
+   * @param description  The name or description associated with the puzzle
+   * @param rows         The number of rows
+   * @param cols         The number of columns
+   * @param dimension    The dimension of the area to fit to
+   * @return             The Puzzle
+   */
+  public Puzzle createPuzzle(String name, String description, int rows, Dimension dimension)
+  {
+    BufferedImage bi;
+    //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
+
+    bi = null;
+    
+    try
+    {
+      bi = ImageIO.read(new File(name));
+    }
+    catch (IOException io)
+    {
+      bi = null;
+    }
+    
+    Image image = null;
+    if (bi.getHeight() > dimension.height)
+    {
+      image = bi.getScaledInstance(-1, dimension.height, 0);
+      
+      if (image.getWidth(null) > dimension.width)
+        image = image.getScaledInstance(dimension.width, -1, 0);
+    }
+    else if (bi.getWidth() > dimension.width)
+      image = bi.getScaledInstance(dimension.width, -1, 0);
+      
+    
+    if (image == null)
+      return createPuzzle(bi, description, rows);
+    else
+      return createPuzzle(image, description, rows);
   }
 }

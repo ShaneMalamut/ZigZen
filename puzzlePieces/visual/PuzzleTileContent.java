@@ -49,6 +49,12 @@ public class PuzzleTileContent extends    RuleBasedSprite
   {
     // TODO Auto-generated method stub
   }
+  
+  public void setPosition(double left, double top)
+  {
+    this.left = left;
+    this.top  = top;
+  }
 
   @Override
   public void handleTick(int arg0)

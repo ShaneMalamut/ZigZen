@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.util.Random;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -33,6 +34,8 @@ public class PuzzleBoard extends Stage
   private BufferedImage  watermarkTransparent;
   private ResourceFinder jarFinder;
   private Puzzle         puzzle;
+  private int            width;
+  private int            height;
   
   /**
    * Constructor.
@@ -42,6 +45,9 @@ public class PuzzleBoard extends Stage
   public PuzzleBoard(final int width, final int height)
   {
     super(TIME_STEP);
+    
+    this.width  = width;
+    this.height = height;
     
     jarFinder = ResourceFinder.createInstance(new Marker());
     
@@ -108,16 +114,25 @@ public class PuzzleBoard extends Stage
    */
   public void setPuzzle(final Puzzle puzzle)
   {
+    clear();
     this.puzzle = puzzle;
     
     //Switch to transparent watermark when puzzle is displayed
     watermark.setImage(watermarkTransparent);
 
+    System.out.println(puzzle.size());
+    Random rand = new Random();
+    
     ContentFactory tcFactory = new ContentFactory();
     for (PuzzleTile tile : puzzle)
     {
       TransformableContent content = tcFactory.createContent(tile.getImage());
       PuzzleTileContent tileContent = new PuzzleTileContent(content, tile);
+
+      double randX = rand.nextInt((int) (width * 0.5)) + width * 0.25;
+      double randY = rand.nextInt((int) (height * 0.5)) + height * 0.25;
+      tileContent.setPosition(randX, randY);
+      
       add(tileContent);
       addMouseMotionListener(tileContent);
     }

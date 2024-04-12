@@ -1,6 +1,7 @@
 package app;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -103,27 +104,37 @@ public class ZigZenApplication extends JApplication implements ActionListener
   {
     String fileName = fileField.getText();
     Puzzle puzzle = null;
-    try
+    
+    if (fileName.length() == 0)
     {
-      BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-      if (isImageFile(fileName))
-      {
-        PuzzleFactory pf = new PuzzleFactory();
-        puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", 10);
-      }
-      else
-      {
-        puzzle = PuzzleReader.read(br);
-      }
-      
-      puzzleBoard.setPuzzle(puzzle);
+      PuzzleFactory pf = new PuzzleFactory();
+      System.out.println("Reading example puzzle");
+      puzzle = pf.createPuzzle("StarryNight.jpg", "Starry Night", 3, new Dimension((int) (width * 0.75), (int) (height * 0.75)));
     }
-    catch (IOException ioe)
+    else
     {
-      JOptionPane.showMessageDialog(getGUIComponent(), 
-          "There was a problem reading " + fileName,
-          "Error", JOptionPane.ERROR_MESSAGE);
+      try
+      {
+        BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
+        if (isImageFile(fileName))
+        {
+          PuzzleFactory pf = new PuzzleFactory();
+          puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", 3);
+        }
+        else
+        {
+          puzzle = PuzzleReader.read(br);
+        }
+      }
+      catch (IOException ioe)
+      {
+        JOptionPane.showMessageDialog(getGUIComponent(), 
+            "There was a problem reading " + fileName,
+            "Error", JOptionPane.ERROR_MESSAGE);
+      }
     }
+    
+    puzzleBoard.setPuzzle(puzzle);
   }
   
   /**
