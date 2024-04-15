@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.event.MouseInputListener;
-
 import gui.PuzzleCursor;
 import puzzlePieces.PuzzleTile;
 import visual.dynamic.described.RuleBasedSprite;

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -140,10 +141,29 @@ public class ZigZenApplication extends JApplication implements ActionListener
     {
       PuzzleFactory pf = new PuzzleFactory();
       System.out.println("Reading example puzzle");
+      
+      BufferedImage image = null;
+      ResourceFinder rf = ResourceFinder.createInstance(new Marker());
+      InputStream   is = rf.findInputStream("StarryNight.jpg");
+      
+      // Attempt to get the image
+      if (is != null)
+      {
+        try
+        {
+          image = ImageIO.read(is);
+          is.close();
+        }
+        catch (IOException ioe)
+        {
+          return;
+        }
+      }
+      
       if (colNum > 0)
-        puzzle = pf.createPuzzle("StarryNight.jpg", "Starry Night", rowNum, colNum, new Dimension((int) (width * 0.75), (int) (height * 0.75)));
+        puzzle = pf.createPuzzle(image, "Starry Night", rowNum, colNum);
       else
-        puzzle = pf.createPuzzle("StarryNight.jpg", "Starry Night", rowNum, new Dimension((int) (width * 0.75), (int) (height * 0.75)));
+        puzzle = pf.createPuzzle(image, "Starry Night", rowNum);
     }
     else
     {
