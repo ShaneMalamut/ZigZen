@@ -35,11 +35,14 @@ public class ZigZenApplication extends JApplication implements ActionListener
 
   protected static final String ABOUT = "About";
   protected static final String LOAD = "Load";
+  protected static final String ROWS = "Rows";
 
   private static final Color BACKGROUND_COLOR = new Color(218, 204, 230);
   
   private JButton aboutButton, loadButton;
   private JTextField fileField;
+  private JTextField rowsField;
+  private JTextField colsField;
   private PuzzleBoard puzzleBoard;
   private String aboutText;
   
@@ -103,13 +106,44 @@ public class ZigZenApplication extends JApplication implements ActionListener
   protected void handleLoad()
   {
     String fileName = fileField.getText();
+    String rows     = rowsField.getText();
+    String cols     = colsField.getText();
     Puzzle puzzle = null;
+    int rowNum = 4;
+    int colNum = 0;
+    
+    if (rows.length() > 0)
+    {
+      try
+      {
+        rowNum = Integer.parseInt(rows);
+      }
+      catch (NumberFormatException nfe)
+      {
+        rowNum = 4;
+      }
+    }
+    
+    if (cols.length() > 0)
+    {
+      try
+      {
+        colNum = Integer.parseInt(cols);
+      }
+      catch (NumberFormatException nfe)
+      {
+        colNum = 0;
+      }
+    }
     
     if (fileName.length() == 0)
     {
       PuzzleFactory pf = new PuzzleFactory();
       System.out.println("Reading example puzzle");
-      puzzle = pf.createPuzzle("StarryNight.jpg", "Starry Night", 3, new Dimension((int) (width * 0.75), (int) (height * 0.75)));
+      if (colNum > 0)
+        puzzle = pf.createPuzzle("StarryNight.jpg", "Starry Night", rowNum, colNum, new Dimension((int) (width * 0.75), (int) (height * 0.75)));
+      else
+        puzzle = pf.createPuzzle("StarryNight.jpg", "Starry Night", rowNum, new Dimension((int) (width * 0.75), (int) (height * 0.75)));
     }
     else
     {
@@ -119,7 +153,11 @@ public class ZigZenApplication extends JApplication implements ActionListener
         if (isImageFile(fileName))
         {
           PuzzleFactory pf = new PuzzleFactory();
-          puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", 3);
+          
+          if (colNum > 0)
+            puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", rowNum, colNum);
+          else
+            puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", rowNum);
         }
         else
         {
@@ -166,14 +204,30 @@ public class ZigZenApplication extends JApplication implements ActionListener
     fileField = new JTextField();
     fileField.setBounds(80, 30, 200, 30);
     contentPane.add(fileField);
+
+    label = new JLabel("Rows: ");
+    label.setBounds(320, 30, 50, 30);
+    contentPane.add(label);
+    
+    rowsField = new JTextField();
+    rowsField.setBounds(380, 30, 50, 30);
+    contentPane.add(rowsField);
+    
+    label = new JLabel("Columns: ");
+    label.setBounds(440, 30, 80, 30);
+    contentPane.add(label);
+    
+    colsField = new JTextField();
+    colsField.setBounds(530, 30, 50, 30);
+    contentPane.add(colsField);
     
     loadButton = new JButton(LOAD);
-    loadButton.setBounds(320, 30, 50, 30);
+    loadButton.setBounds(600, 30, 70, 30);
     loadButton.addActionListener(this);
     contentPane.add(loadButton);
     
     aboutButton = new JButton(ABOUT);
-    aboutButton.setBounds(400, 30, 70, 30);
+    aboutButton.setBounds(700, 30, 80, 30);
     aboutButton.addActionListener(this);
     contentPane.add(aboutButton);
     

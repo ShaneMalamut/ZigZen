@@ -34,6 +34,7 @@ public class PuzzleBoard extends Stage
   private BufferedImage  watermarkTransparent;
   private ResourceFinder jarFinder;
   private Puzzle         puzzle;
+  private PuzzleCursor   cursor;
   private int            width;
   private int            height;
   
@@ -117,6 +118,9 @@ public class PuzzleBoard extends Stage
     clear();
     this.puzzle = puzzle;
     
+    cursor = PuzzleCursor.createInstance();
+    cursor.setObserver(this);
+    
     //Switch to transparent watermark when puzzle is displayed
     watermark.setImage(watermarkTransparent);
 
@@ -128,6 +132,7 @@ public class PuzzleBoard extends Stage
     {
       TransformableContent content = tcFactory.createContent(tile.getImage());
       PuzzleTileContent tileContent = new PuzzleTileContent(content, tile);
+      tileContent.setCursor(cursor);
 
       double randX = rand.nextInt((int) (width * 0.5)) + width * 0.25;
       double randY = rand.nextInt((int) (height * 0.5)) + height * 0.25;
