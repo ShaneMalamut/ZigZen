@@ -18,7 +18,8 @@ import visual.statik.TransformableContent;
  *          This work complies with the JMU Honor Code.
  */
 public class PuzzleTileContent extends    RuleBasedSprite 
-                               implements MouseMotionListener
+                               implements MouseMotionListener, 
+                                          PuzzleComponentContent
 {
   private double       left, top;
   private PuzzleTile   tile;
@@ -30,6 +31,15 @@ public class PuzzleTileContent extends    RuleBasedSprite
   private PuzzleTileContent south;
   private PuzzleTileContent east;
   private PuzzleTileContent west;
+  
+  private PuzzleCompositeContent composite;
+  
+  private boolean joinedNorth;
+  private boolean joinedSouth;
+  private boolean joinedEast;
+  private boolean joinedWest;
+  
+  private boolean aligned;
 
   public PuzzleTileContent(TransformableContent content, PuzzleTile tile)
   {
@@ -47,12 +57,33 @@ public class PuzzleTileContent extends    RuleBasedSprite
     south = null;
     east =  null;
     west =  null;
+    
+    composite = null;
+    
+    joinedNorth = false;
+    joinedSouth = false;
+    joinedEast =  false;
+    joinedWest =  false;
+    
+    aligned = true;
   }
 
+  public PuzzleCompositeContent getComposite()
+  {
+    return composite;
+  }
+  
+  @Override
+  public void setComposite(PuzzleCompositeContent composite)
+  {
+    this.composite = composite;
+  }
+  
   public void setCursor(PuzzleCursor cursor)
   {
     this.cursor = cursor;
   }
+  
   /**
    * When the tile is clicked and dragged.
    */
@@ -101,6 +132,10 @@ public class PuzzleTileContent extends    RuleBasedSprite
   {
     held = false;
     notifyNeighbors();
+    if (composite != null)
+    {
+      composite.alignConnections();
+    }
   }
   
   public void notifyNeighbors()
@@ -127,31 +162,77 @@ public class PuzzleTileContent extends    RuleBasedSprite
     switch (direction)
     {
       case 0: // North of me
-        if (vDiff > tileHeight - wiggleRoom && vDiff < tileHeight + wiggleRoom
-            && Math.abs(hDiff) < wiggleRoom)
+        if (!joinedNorth && Math.abs(hDiff) < wiggleRoom
+            && vDiff > tileHeight - wiggleRoom && vDiff < tileHeight + wiggleRoom)
+        {
           // connect with north
+          joinNorth();
+          north.joinSouth();
           System.out.println("Connect with north");
+          join(north);
+        }
         break;
       case 1: // East of me
-        if (-hDiff > tileWidth - wiggleRoom && -hDiff < tileWidth + wiggleRoom
-            && Math.abs(vDiff) < wiggleRoom)
+        if (!joinedEast && Math.abs(vDiff) < wiggleRoom
+            && -hDiff > tileWidth - wiggleRoom && -hDiff < tileWidth + wiggleRoom)
+        {
           // connect with east
+          joinEast();
+          east.joinWest();
           System.out.println("Connect with east");
+          join(east);
+        }
         break;
       case 2: // South of me
-        if (-vDiff > tileHeight - wiggleRoom && -vDiff < tileHeight + wiggleRoom
-            && Math.abs(hDiff) < wiggleRoom)
+        if (!joinedSouth && Math.abs(hDiff) < wiggleRoom
+            && -vDiff > tileHeight - wiggleRoom && -vDiff < tileHeight + wiggleRoom)
+        {
           // connect with south
+          joinSouth();
+          south.joinNorth();
           System.out.println("Connect with south");
+          join(south);
+        }
         break;
       case 3: // West of me
-        if (hDiff > tileWidth - wiggleRoom && hDiff < tileWidth + wiggleRoom
-            && Math.abs(vDiff) < wiggleRoom)
+        if (!joinedWest && Math.abs(vDiff) < wiggleRoom
+            && hDiff > tileWidth - wiggleRoom && hDiff < tileWidth + wiggleRoom)
+        {
           // connect with west
+          joinWest();
+          west.joinEast();
           System.out.println("Connect with west");
+          join(west);
+        }
         break;
       default:
         break;
+    }
+  }
+  
+  public void join(PuzzleTileContent neighbor)
+  {
+    System.out.println("Joining");
+    if (composite == null && neighbor.getComposite() == null)
+    {
+      // No composites involved
+      composite = new PuzzleCompositeContent(this);
+      composite.add(neighbor);
+    }
+    else if (composite != null && neighbor.getComposite() == null)
+    {
+      // This is in a composite
+      composite.add(neighbor);
+    }
+    else if (composite == null && neighbor.getComposite() != null)
+    {
+      // Neighbor is in a composite
+      neighbor.getComposite().add(this);
+    }
+    else
+    {
+      // Both are in composites
+      composite.addAll(neighbor.getComposite());
     }
   }
   
@@ -175,10 +256,73 @@ public class PuzzleTileContent extends    RuleBasedSprite
     west = tile;
   }
   
+  protected void joinNorth()
+  {
+    joinedNorth = true;
+  }
+  
+  protected void joinSouth()
+  {
+    joinedSouth = true;
+  }
+  
+  protected void joinEast()
+  {
+    joinedEast = true;
+  }
+  
+  protected void joinWest()
+  {
+    joinedWest = true;
+  }
+  
   @Override
   public void handleTick(int arg0)
   {
     setLocation(left, top);
+  }
+
+  @Override
+  public void alignConnections()
+  {
+    double tileHeight = tile.getHeight();
+    double tileWidth  = tile.getWidth();
+    
+    if (north != null && north.getComposite() == composite)
+    {
+      north.alignConnections(left, top - tileHeight);
+    }
+    
+    if (south != null && south.getComposite() == composite)
+    {
+      south.alignConnections(left, top + tileHeight);
+    }
+    
+    if (east != null && east.getComposite() == composite)
+    {
+      east.alignConnections(left + tileWidth, top);
+    }
+    
+    if (west != null && west.getComposite() == composite)
+    {
+      west.alignConnections(left - tileWidth, top);
+    }
+  }
+  
+  protected void alignConnections(double left, double top)
+  {
+    if (!aligned)
+    {
+      setPosition(left, top);
+      aligned = true;
+      alignConnections();
+    }
+  }
+  
+  @Override
+  public void observeAlignment()
+  {
+    aligned = false;
   }
 
 }
