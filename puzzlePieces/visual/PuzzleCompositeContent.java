@@ -34,12 +34,22 @@ public class PuzzleCompositeContent implements PuzzleComponentContent
   @Override
   public void alignConnections()
   {
+    PuzzleComponentContent root = components.get(0);
+    alignConnections(root);
+  }
+  
+  public void alignConnections(PuzzleComponentContent root)
+  {
+    if (root.getComposite() != this)
+    {
+      return;
+    }
+    
     for (PuzzleComponentContent component : components)
     {
       component.observeAlignment();
     }
     
-    PuzzleComponentContent root = components.get(0);
     root.alignConnections();
   }
   
@@ -60,5 +70,12 @@ public class PuzzleCompositeContent implements PuzzleComponentContent
   {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public PuzzleCompositeContent getComposite()
+  {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

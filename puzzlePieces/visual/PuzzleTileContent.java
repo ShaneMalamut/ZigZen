@@ -134,7 +134,7 @@ public class PuzzleTileContent extends    RuleBasedSprite
     notifyNeighbors();
     if (composite != null)
     {
-      composite.alignConnections();
+      composite.alignConnections(this);
     }
   }
   
