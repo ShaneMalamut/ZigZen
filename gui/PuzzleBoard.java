@@ -127,6 +127,10 @@ public class PuzzleBoard extends Stage
     System.out.println(puzzle.size());
     Random rand = new Random();
     
+    int rows = puzzle.getRows();
+    int cols = puzzle.getCols();
+    PuzzleTileContent[][] grid = new PuzzleTileContent[rows][cols];
+    
     ContentFactory tcFactory = new ContentFactory();
     for (PuzzleTile tile : puzzle)
     {
@@ -140,6 +144,21 @@ public class PuzzleBoard extends Stage
       
       add(tileContent);
       addMouseMotionListener(tileContent);
+      
+      int row = tile.getRow();
+      int col = tile.getCol();
+      grid[row][col] = tileContent;
+      
+      if (row > 0)
+      {
+        grid[row-1][col].setSouth(tileContent);
+        tileContent.setNorth(grid[row-1][col]);
+      }
+      if (col > 0)
+      {
+        grid[row][col-1].setEast(tileContent);
+        tileContent.setWest(grid[row][col-1]);
+      }
     }
   }
 }

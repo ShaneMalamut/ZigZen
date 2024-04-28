@@ -62,7 +62,7 @@ public class PuzzleFactory
    */
   public Puzzle createPuzzle(BufferedImage image, String description, int rows, int cols)
   {
-    Puzzle puzzle = new Puzzle(description);
+    Puzzle puzzle = new Puzzle(description, rows, cols);
     
     int height = image.getHeight();
     int width  = image.getWidth();
@@ -97,7 +97,8 @@ public class PuzzleFactory
         if (x < 0) x = 0;
         if (x > width - w) x = width - w;
         
-        puzzle.add(new PuzzleTile(r, c, tileHeight, tileWidth, image.getSubimage(x, y, w, h)));
+        PuzzleTile tile = new PuzzleTile(r, c, tileHeight, tileWidth, image.getSubimage(x, y, w, h));
+        puzzle.add(tile);
       }
     }
     

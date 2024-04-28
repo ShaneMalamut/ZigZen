@@ -25,6 +25,11 @@ public class PuzzleTileContent extends    RuleBasedSprite
   private boolean      hover;
   private boolean      held;
   private PuzzleCursor cursor;
+  
+  private PuzzleTileContent north;
+  private PuzzleTileContent south;
+  private PuzzleTileContent east;
+  private PuzzleTileContent west;
 
   public PuzzleTileContent(TransformableContent content, PuzzleTile tile)
   {
@@ -37,6 +42,11 @@ public class PuzzleTileContent extends    RuleBasedSprite
     
     hover = false;
     held  = false;
+    
+    north = null;
+    south = null;
+    east =  null;
+    west =  null;
   }
 
   public void setCursor(PuzzleCursor cursor)
@@ -90,13 +100,84 @@ public class PuzzleTileContent extends    RuleBasedSprite
   public void release()
   {
     held = false;
+    notifyNeighbors();
   }
-
+  
+  public void notifyNeighbors()
+  {
+    if (north != null)
+      north.observePosition(left, top, 2);
+    if (south != null)
+      south.observePosition(left, top, 0);
+    if (east != null)
+      east.observePosition(left, top, 3);
+    if (west != null)
+      west.observePosition(left, top, 1);
+  }
+  
+  public void observePosition(double left, double top, int direction)
+  {
+    double hDiff      = this.left - left;
+    double vDiff      = this.top - top;
+    double tileWidth  = tile.getWidth();
+    double tileHeight = tile.getHeight();
+    double wiggleRoom = 10;
+    
+    //System.out.println(String.format("%f %f %f", hDiff, tileWidth, Math.abs(hDiff)));
+    switch (direction)
+    {
+      case 0: // North of me
+        if (vDiff > tileHeight - wiggleRoom && vDiff < tileHeight + wiggleRoom
+            && Math.abs(hDiff) < wiggleRoom)
+          // connect with north
+          System.out.println("Connect with north");
+        break;
+      case 1: // East of me
+        if (-hDiff > tileWidth - wiggleRoom && -hDiff < tileWidth + wiggleRoom
+            && Math.abs(vDiff) < wiggleRoom)
+          // connect with east
+          System.out.println("Connect with east");
+        break;
+      case 2: // South of me
+        if (-vDiff > tileHeight - wiggleRoom && -vDiff < tileHeight + wiggleRoom
+            && Math.abs(hDiff) < wiggleRoom)
+          // connect with south
+          System.out.println("Connect with south");
+        break;
+      case 3: // West of me
+        if (hDiff > tileWidth - wiggleRoom && hDiff < tileWidth + wiggleRoom
+            && Math.abs(vDiff) < wiggleRoom)
+          // connect with west
+          System.out.println("Connect with west");
+        break;
+      default:
+        break;
+    }
+  }
+  
+  public void setNorth(PuzzleTileContent tile)
+  {
+    north = tile;
+  }
+  
+  public void setSouth(PuzzleTileContent tile)
+  {
+    south = tile;
+  }
+  
+  public void setEast(PuzzleTileContent tile)
+  {
+    east = tile;
+  }
+  
+  public void setWest(PuzzleTileContent tile)
+  {
+    west = tile;
+  }
+  
   @Override
   public void handleTick(int arg0)
   {
-    // TODO Auto-generated method stub
-
     setLocation(left, top);
   }
 

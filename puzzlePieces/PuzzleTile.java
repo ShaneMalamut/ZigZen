@@ -80,6 +80,16 @@ public class PuzzleTile implements Component
     return tileHeight;
   }
   
+  public int getRow()
+  {
+    return row;
+  }
+  
+  public int getCol()
+  {
+    return col;
+  }
+  
   public void rotate(final Point origin, final int degrees)
   {
     //TODO math stuff

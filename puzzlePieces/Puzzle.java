@@ -8,11 +8,16 @@ public class Puzzle implements Iterable<PuzzleTile>
 {
   protected String description;
   protected List<PuzzleTile> tiles;
+  protected int rows;
+  protected int cols;
   
-  public Puzzle(String description)
+  public Puzzle(String description, int rows, int cols)
   {
     this.description = description;
-    tiles = new ArrayList<PuzzleTile>();
+    this.rows = rows;
+    this.cols = cols;
+    
+    tiles = new ArrayList<PuzzleTile>(rows*cols);
   }
   
   public void add(PuzzleTile tile)
@@ -28,6 +33,16 @@ public class Puzzle implements Iterable<PuzzleTile>
   public PuzzleTile getElement(int index)
   {
     return tiles.get(index);
+  }
+  
+  public int getRows()
+  {
+    return rows;
+  }
+  
+  public int getCols()
+  {
+    return cols;
   }
   
   public void handleTile(PuzzleTile tile)
