@@ -14,10 +14,10 @@ import java.util.List;
  */
 public class Puzzle implements Iterable<PuzzleTile>
 {
-  protected String description;
+  protected int              rows;
+  protected int              cols;
   protected List<PuzzleTile> tiles;
-  protected int rows;
-  protected int cols;
+  protected String           description;
   
   /**
    * Constructor.
@@ -48,6 +48,15 @@ public class Puzzle implements Iterable<PuzzleTile>
   }
   
   /**
+   * Get the number of columns in the Puzzle.
+   * @return The number of columns
+   */
+  public int getCols()
+  {
+    return cols;
+  }
+  
+  /**
    * Get the description of the Puzzle.
    * @return The description
    */
@@ -73,15 +82,6 @@ public class Puzzle implements Iterable<PuzzleTile>
   public int getRows()
   {
     return rows;
-  }
-  
-  /**
-   * Get the number of columns in the Puzzle.
-   * @return The number of columns
-   */
-  public int getCols()
-  {
-    return cols;
   }
   
   /**

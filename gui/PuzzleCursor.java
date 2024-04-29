@@ -15,8 +15,8 @@ import puzzlePieces.visual.PuzzleTileContent;
  */
 public class PuzzleCursor
 {
-  private PuzzleTileContent held;
   private PuzzleBoard       observer;
+  private PuzzleTileContent held;
   
   /**
    * Constructor.
@@ -45,7 +45,8 @@ public class PuzzleCursor
     
     held = t;
     
-    held.playGrabSound();
+    // Currently disabled to prevent too many audio plays
+    //held.playGrabSound();
     
     PuzzleCompositeContent composite = held.getComposite();
     if (composite != null)
@@ -93,14 +94,5 @@ public class PuzzleCursor
     }
     
     held = null;
-  }
-  
-  /**
-   * Get the held tile.
-   * @return The held tile, or null if there is none
-   */
-  public PuzzleTileContent getHeld()
-  {
-    return held;
   }
 }

@@ -13,12 +13,12 @@ import java.awt.image.BufferedImage;
  */
 public class PuzzleTile
 {
-  private Point location;
-  private int row;
-  private int col;
-  private int tileHeight;
-  private int tileWidth;
   private BufferedImage image;
+  private int           row;
+  private int           col;
+  private int           tileHeight;
+  private int           tileWidth;
+  private Point         location;
   
   /**
    * Constructor.
@@ -40,12 +40,39 @@ public class PuzzleTile
   }
   
   /**
+   * Get the column of this tile.
+   * @return The column
+   */
+  public int getCol()
+  {
+    return col;
+  }
+  
+  /**
+   * Get the height of this tile.
+   * @return The height
+   */
+  public double getHeight()
+  {
+    return tileHeight;
+  }
+  
+  /**
    * Get the image of this tile.
    * @return The image
    */
   public BufferedImage getImage()
   {
     return image;
+  }
+  
+  /**
+   * Get the left-side position of this tile.
+   * @return The left-side position
+   */
+  public double getLeft()
+  {
+    return location.getX();
   }
   
   /**
@@ -58,12 +85,12 @@ public class PuzzleTile
   }
   
   /**
-   * Get the left-side position of this tile.
-   * @return The left-side position
+   * Get the row of this tile.
+   * @return The row
    */
-  public double getLeft()
+  public int getRow()
   {
-    return location.getX();
+    return row;
   }
   
   /**
@@ -82,32 +109,5 @@ public class PuzzleTile
   public double getWidth()
   {
     return tileWidth;
-  }
-  
-  /**
-   * Get the height of this tile.
-   * @return The height
-   */
-  public double getHeight()
-  {
-    return tileHeight;
-  }
-  
-  /**
-   * Get the row of this tile.
-   * @return The row
-   */
-  public int getRow()
-  {
-    return row;
-  }
-  
-  /**
-   * Get the column of this tile.
-   * @return The column
-   */
-  public int getCol()
-  {
-    return col;
   }
 }

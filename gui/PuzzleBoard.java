@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import io.ResourceFinder;
 import puzzlePieces.Puzzle;
 import puzzlePieces.PuzzleTile;
+import puzzlePieces.auditory.PuzzleSoundPlayer;
 import puzzlePieces.visual.PuzzleTileContent;
 import resources.Marker;
 import visual.VisualizationView;
@@ -32,12 +33,15 @@ public class PuzzleBoard extends Stage
 {
   private static final Color BACKGROUND_COLOR = new Color(244, 239, 225);
   private static final int   TIME_STEP        = 15;
+
+  private Content           watermark;
   
-  private Content        watermark;
-  private ResourceFinder jarFinder;
-  private PuzzleCursor   cursor;
-  private int            width;
-  private int            height;
+  private int               width;
+  private int               height;
+  
+  private PuzzleCursor      cursor;
+  private PuzzleSoundPlayer soundPlayer;
+  private ResourceFinder    jarFinder;
   
   /**
    * Constructor.
@@ -128,14 +132,18 @@ public class PuzzleBoard extends Stage
     
     // Create the Cursor
     cursor = new PuzzleCursor(this);
+    
+    // Create the sound player
+    soundPlayer = new PuzzleSoundPlayer();
 
     // For each PuzzleTile, create and prepare its associated Content object
     for (PuzzleTile tile : puzzle)
     {
-      // Create the Content from the appropriate subimage and set the Cursor
+      // Create the Content from the appropriate subimage, and set the Cursor and sound player
       TransformableContent content = tcFactory.createContent(tile.getImage(), false);
       PuzzleTileContent tileContent = new PuzzleTileContent(content, tile);
       tileContent.setCursor(cursor);
+      tileContent.setSoundPlayer(soundPlayer);
 
       // Position the PuzzleTileContent at a random position on the screen
       // In the future, a more robust method of spreading out tiles should be implemented,

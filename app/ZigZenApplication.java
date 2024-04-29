@@ -36,8 +36,11 @@ public class ZigZenApplication extends JApplication implements ActionListener
   public static final int WIDTH  = 1024;
   public static final int HEIGHT = 768;
   
+  protected static final Color  BACKGROUND_COLOR     = new Color(218, 204, 230);
+  
   protected static final int    DEFAULT_ROWS         = 4;
   protected static final int    DEFAULT_COLS         = 0;
+  
   protected static final String DEFAULT_PUZZLE       = "StarryNight.jpg";
   protected static final String DEFAULT_PUZZLE_DESC  = "Starry Night";
   protected static final String UNTITLED_PUZZLE_DESC = "Untitled Puzzle";
@@ -50,8 +53,6 @@ public class ZigZenApplication extends JApplication implements ActionListener
   
   protected static final String WARNING_TEXT = 
       "Invalid input for %s field. The default value will be used instead.";
-  
-  protected static final Color BACKGROUND_COLOR = new Color(218, 204, 230);
   
   private JButton     aboutButton, loadButton;
   private JTextField  fileField;
@@ -103,6 +104,16 @@ public class ZigZenApplication extends JApplication implements ActionListener
     
     if (ac.equalsIgnoreCase(LOAD)) handleLoad();
     else if (ac.equalsIgnoreCase(ABOUT)) handleAbout();
+  }
+  
+  /**
+   * Construct the GUI components to use to display the Property information.
+   * 
+   * @return The JComponent
+   */
+  protected JComponent getGUIComponent()
+  {
+    return puzzleBoard.getView();
   }
   
   /**
@@ -217,17 +228,7 @@ public class ZigZenApplication extends JApplication implements ActionListener
     
     puzzleBoard.setPuzzle(puzzle);
   }
-  
-  /**
-   * Construct the GUI components to use to display the Property information.
-   * 
-   * @return The JComponent
-   */
-  protected JComponent getGUIComponent()
-  {
-    return puzzleBoard.getView();
-  }
-  
+
   /**
    * Initialize this JApplication (required by JApplication).
    * Specifically, construct and layout the JFrame.
@@ -292,7 +293,7 @@ public class ZigZenApplication extends JApplication implements ActionListener
   }
   
   /**
-   * Construct and invoke  (in the event dispatch thread) 
+   * Construct and invoke (in the event dispatch thread) 
    * an instance of this JApplication.
    * 
    * @param args The command line arguments
