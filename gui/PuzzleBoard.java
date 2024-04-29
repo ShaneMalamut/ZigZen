@@ -133,7 +133,7 @@ public class PuzzleBoard extends Stage
     for (PuzzleTile tile : puzzle)
     {
       // Create the Content from the appropriate subimage and set the Cursor
-      TransformableContent content = tcFactory.createContent(tile.getImage());
+      TransformableContent content = tcFactory.createContent(tile.getImage(), false);
       PuzzleTileContent tileContent = new PuzzleTileContent(content, tile);
       tileContent.setCursor(cursor);
 

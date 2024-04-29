@@ -42,10 +42,10 @@ public class PuzzleCursor
   {
     if (held != null)
       return;
-
-    System.out.println("Grabbing");
     
     held = t;
+    
+    held.playGrabSound();
     
     PuzzleCompositeContent composite = held.getComposite();
     if (composite != null)
@@ -74,9 +74,7 @@ public class PuzzleCursor
   {
     if (held == null)
       return;
-    
-    System.out.println("Releasing");
-    
+        
     PuzzleCompositeContent composite = held.getComposite();
     if (composite != null)
     {

@@ -3,8 +3,18 @@ package puzzlePieces.visual;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
 
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import auditory.sampled.BoomBox;
+import auditory.sampled.BufferedSound;
+import auditory.sampled.BufferedSoundFactory;
 import gui.PuzzleCursor;
+import io.ResourceFinder;
 import puzzlePieces.PuzzleTile;
 import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.TransformableContent;
@@ -12,14 +22,15 @@ import visual.statik.TransformableContent;
 /**
  * A PuzzleTile that knows how to render itself,
  * knows how to interact with the mouse cursor,
- * and knows how to interact with other tiles.
+ * knows how to interact with other tiles,
+ * and knows how to play audio effects.
  * 
  * @author Shane Malamut, James Madison University
  * @version 1.0
  * 
  *          This work complies with the JMU Honor Code.
  */
-public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionListener
+public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionListener, LineListener
 {
   private static final int DEFAULT_WIGGLE_ROOM = 10;
   
@@ -45,6 +56,10 @@ public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionLis
   private PuzzleTileContent west;
   
   private PuzzleCompositeContent composite;
+  
+  private BoomBox  boomboxGrab;
+  private BoomBox  boomboxJoin;
+  private BoomBox  boomboxMultijoin;
   
   /**
    * Constructor.
@@ -80,8 +95,89 @@ public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionLis
     joinedWest  = false;
     
     aligned = true;
+    
+    audioInit();
+  }
+  
+  private void audioInit()
+  {
+    BufferedSound thumpSound = createSound("thump.wav");
+    boomboxGrab = new BoomBox(thumpSound);       
+    boomboxGrab.addLineListener(this);
+    
+    BufferedSound joinSound = createSound("snap1.wav");
+    boomboxJoin = new BoomBox(joinSound);       
+    boomboxJoin.addLineListener(this);
+    
+    BufferedSound multijoinSound = createSound("snap2.wav");
+    boomboxMultijoin = new BoomBox(multijoinSound);       
+    boomboxMultijoin.addLineListener(this);
   }
 
+  protected BufferedSound createSound(final String name)
+  {
+    BufferedSound        sound;       
+    BufferedSoundFactory factory;       
+    ResourceFinder       finder;       
+
+    finder  = ResourceFinder.createInstance(resources.Marker.class);
+    factory = new BufferedSoundFactory(finder);
+
+    try
+    {
+      sound = factory.createBufferedSound(name);
+    }
+    catch (UnsupportedAudioFileException e)
+    {
+      sound = null;
+    }
+    catch (IOException e)
+    {
+      sound = null;
+    }
+
+    return sound;
+  }
+  
+  /**
+   * Play grab sound effect.
+   */
+  public void playGrabSound()
+  {
+    try
+    {
+      boomboxGrab.start(false);
+    }
+    catch (LineUnavailableException e)
+    {
+      System.out.println("Couldn't play grab sound");
+    }
+  }
+  
+  private void playJoinSound()
+  {
+    try
+    {
+      boomboxJoin.start(false);
+    }
+    catch (LineUnavailableException e)
+    {
+      System.out.println("Couldn't play join sound");
+    }
+  }
+  
+  private void playMultijoinSound()
+  {
+    try
+    {
+      boomboxMultijoin.start(false);
+    }
+    catch (LineUnavailableException e)
+    {
+      System.out.println("Couldn't play multi-join sound");
+    }
+  }
+  
   /**
    * Get the PuzzleCompositeContent, or null if this tile is not in a composite.
    * @return The PuzzleCompositeContent, or null
@@ -263,21 +359,29 @@ public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionLis
       // No composites involved
       composite = new PuzzleCompositeContent(this);
       composite.add(neighbor);
+      
+      playJoinSound();
     }
     else if (composite != null && neighbor.getComposite() == null)
     {
       // This is in a composite
       composite.add(neighbor);
+      
+      playMultijoinSound();
     }
     else if (composite == null && neighbor.getComposite() != null)
     {
       // Neighbor is in a composite
       neighbor.getComposite().add(this);
+      
+      playMultijoinSound();
     }
     else
     {
       // Both are in composites
       composite.addAll(neighbor.getComposite());
+      
+      playMultijoinSound();
     }
   }
   
@@ -400,6 +504,15 @@ public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionLis
     Point p = new Point();
     p.setLocation(left, top);
     return p;
+  }
+
+  /**
+   * Handle update events (Required by LineListener).
+   */
+  @Override
+  public void update(final LineEvent event)
+  {
+    
   }
 
 }
