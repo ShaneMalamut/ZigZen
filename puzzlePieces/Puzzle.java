@@ -84,15 +84,6 @@ public class Puzzle implements Iterable<PuzzleTile>
     return rows;
   }
   
-  /**
-   * Add a tile to the Puzzle.
-   * @param tile The tile
-   */
-  public void handleTile(final PuzzleTile tile)
-  {
-    add(tile);
-  }
-  
   @Override
   public Iterator<PuzzleTile> iterator()
   {
