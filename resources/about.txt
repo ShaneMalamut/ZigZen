@@ -1,6 +1,24 @@
 ZigZen version 1.0
-Created by Shane Malamut
+Created by Shane Malamut at James Madison University
+Final project for CS349: Developing Multimedia
+Built using the multimedia2 library created by Professor David Bernstein
 
+Instructions:
+Enter the exact name of a file stored in the same directory as the .jar
+Enter the desired number of rows and columns
+The columns field can be left blank and the program will choose the number of columns
+to result in square-shaped tiles (or as close as it can get).
+(Other fields can also be left blank for default values)
+
+Accepted image file types: ".jpeg", ".jpg", ".png", ".bmp"
+".webmp" and ".gif" may or may not work
+
+Attribution for free audio samples:
+SNAP 065.aiff by loofa -- https://freesound.org/s/88683/ -- License: Attribution NonCommercial 4.0
+Real Snap 26.wav by lafashion -- https://freesound.org/s/361761/ -- License: Creative Commons 0
+snap NR 3.wav by ilip33 -- https://freesound.org/s/593223/ -- License: Creative Commons 0
+
+Information:
 ZigZen is a software application entertainment product designed to 
 simulate the experience of completing a jigsaw puzzle. Emphasis is 
 placed on creating an experience accurate to real life, in order 
