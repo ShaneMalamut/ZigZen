@@ -4,13 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import puzzlePieces.PuzzleFactory;
+
 class PuzzleFactoryTest
 {
 
   @Test
-  void test()
+  void defaultConstructorTest()
   {
-    fail("Not yet implemented");
+    PuzzleFactory pf = new PuzzleFactory();
+    
   }
 
 }

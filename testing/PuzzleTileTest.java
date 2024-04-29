@@ -36,8 +36,7 @@ class PuzzleTileTest
       }
       catch (IOException ioe)
       {
-        // Failed to read image
-        fail();
+        fail("Failed to read image");
       }
     }
     

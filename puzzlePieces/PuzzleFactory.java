@@ -225,23 +225,10 @@ public class PuzzleFactory
     BufferedImage bi;
     bi = ImageIO.read(new File(name));
     
-    // If the image is too big to fit comfortably in the window, resize it
-    Image image = null;
-    if (bi.getHeight() > dimension.height)
-    {
-      image = bi.getScaledInstance(-1, dimension.height, 0);
-      
-      if (image.getWidth(null) > dimension.width)
-        image = image.getScaledInstance(dimension.width, -1, 0);
-    }
-    else if (bi.getWidth() > dimension.width)
-      image = bi.getScaledInstance(dimension.width, -1, 0);
-      
+    // Here, the Dimension should be used to check if the image is too big to fit in the window.
+    // If so, it should be shrunk before continuing. Not yet implemented.
     
-    if (image == null)
-      return createPuzzle(bi, description, rows, cols);
-    else
-      return createPuzzle(image, description, rows, cols);
+    return createPuzzle(bi, description, rows, cols);
   }
   
   /**
