@@ -3,7 +3,15 @@ package puzzlePieces;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-public class PuzzleTile implements Component
+/**
+ * A Puzzle tile, containing a sub image of the larger Puzzle picture.
+ * 
+ * @author Shane Malamut, James Madison University
+ * @version 1.0
+ *
+ *          This work complies with the JMU Honor Code.
+ */
+public class PuzzleTile
 {
   private Point location;
   private int row;
@@ -12,17 +20,16 @@ public class PuzzleTile implements Component
   private int tileWidth;
   private BufferedImage image;
   
-//Should start with a random rotation, random position?, and 10% of being "flipped over". 
-  // Scroll wheel to rotate a tile while it is picked up
-  // Scroll wheel to zoom in and out while you are not holding a tile
-  // Hold right click to pan the screen
-  // Clicking a face-down tile flips it over
-  // Clicking a face-up tile picks it up
-  // - Clicking again drops it
-  
-  // All held tiles should check for connections at each tick interval
-  // Tiles should be divided into grid cells for performance reasons
-  public PuzzleTile(int row, int col, int tileHeight, int tileWidth, BufferedImage image)
+  /**
+   * Constructor.
+   * @param row The row position of the tile
+   * @param col The column position of the tile
+   * @param tileHeight The height of the tile
+   * @param tileWidth The width of the tile
+   * @param image The image of the tile
+   */
+  public PuzzleTile(final int row, final int col, final int tileHeight, final int tileWidth, 
+      final BufferedImage image)
   {
     this.row = row;
     this.col = col;
@@ -31,90 +38,76 @@ public class PuzzleTile implements Component
     this.image = image;
     this.location = new Point(0,0);
   }
-
-  public int connectEdge(final PuzzleTile tile)
-  {
-    //TODO math stuff
-    //check the side for valid connections (is the matching tiles nearby with the right rotation?),
-    //make those connections if possible by combining the tiles into a composite
-    //return 1 if a connection was made
-    return 0;
-  }
   
   /**
-   * Call the connectEdge() method for each edge
+   * Get the image of this tile.
+   * @return The image
    */
-  public int connectEdges()
-  {
-    //TODO
-    return 0;
-  }
-  
   public BufferedImage getImage()
   {
     return image;
   }
   
+  /**
+   * Get the location of this tile.
+   * @return The location
+   */
   public Point getLocation()
   {
     return location;
   }
   
+  /**
+   * Get the left-side position of this tile.
+   * @return The left-side position
+   */
   public double getLeft()
   {
     return location.getX();
   }
   
+  /**
+   * Get the top-side position of this tile.
+   * @return The top-side position
+   */
   public double getTop()
   {
     return location.getY();
   }
   
+  /**
+   * Get the width of this tile.
+   * @return The width
+   */
   public double getWidth()
   {
     return tileWidth;
   }
   
+  /**
+   * Get the height of this tile.
+   * @return The height
+   */
   public double getHeight()
   {
     return tileHeight;
   }
   
+  /**
+   * Get the row of this tile.
+   * @return The row
+   */
   public int getRow()
   {
     return row;
   }
   
+  /**
+   * Get the column of this tile.
+   * @return The column
+   */
   public int getCol()
   {
     return col;
-  }
-  
-  public void rotate(final Point origin, final int degrees)
-  {
-    //TODO math stuff
-  }
-  
-  public void translate(final int x, final int y)
-  {
-    location.translate(x, y);
-  }
-  
-  public void translate(final Point start, final Point end)
-  {
-    int x = end.x - start.x;
-    int y = end.y - start.y;
-    translate(x,y);
-  }
-
-  /**
-   * Constructs a PuzzleTile object from a String representation.
-   * @param line The String representation
-   * @return     The PuzzleTile
-   */
-  public static PuzzleTile parsePuzzleTile(final String line)
-  {
-    // TODO Auto-generated method stub
-    return null;
   }
 }

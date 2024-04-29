@@ -1,25 +1,18 @@
-package puzzlePieces.io;
+package puzzlePieces;
 
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import io.ResourceFinder;
-import puzzlePieces.PuzzleTile;
-import puzzlePieces.Puzzle;
 import visual.statik.sampled.ImageFactory;
 
 /**
- * A utility class for constructing/creating 
- * Puzzle objects.
+ * A utility class for constructing/creating Puzzle objects.
  *
  * @author  Shane Malamut, James Madison University
  *          Based on visual.statik.sampled.ContentFactory by Prof. David Bernstein
@@ -29,9 +22,9 @@ import visual.statik.sampled.ImageFactory;
  */
 public class PuzzleFactory
 {
-  private ImageFactory imageFactory;
-  
   private static final double TAB_LENGTH_PERCENTAGE = 0.25;
+  
+  private ImageFactory imageFactory;
   
   /**
    * Default Constructor.
@@ -44,9 +37,9 @@ public class PuzzleFactory
   /**
    * Explicit Value Constructor.
    *
-   * @param finder   The ResourceFinder to use (if needed)
+   * @param finder The ResourceFinder to use (if needed)
    */
-  public PuzzleFactory(ResourceFinder finder)
+  public PuzzleFactory(final ResourceFinder finder)
   {
     imageFactory = new ImageFactory(finder);
   }
@@ -57,47 +50,71 @@ public class PuzzleFactory
    * @param image       The BufferedImage
    * @param description The name or description associated with the puzzle
    * @param rows        The number of rows
-   * @param cols        The number of columns
+   * @param columns     The number of columns, or -1 if it should be calculated
    * @return            The Puzzle
    */
-  public Puzzle createPuzzle(BufferedImage image, String description, int rows, int cols)
+  public Puzzle createPuzzle(final BufferedImage image, final String description,
+      final int rows, final int columns)
   {
-    Puzzle puzzle = new Puzzle(description, rows, cols);
-    
     int height = image.getHeight();
     int width  = image.getWidth();
     
     int tileHeight = height/rows;
+    
+    // If columns is -1, calculate cols based on the width and tileHeight 
+    // to be as close to square shape as possible
+    int cols = columns;
+    if (cols == -1)
+      cols = width/tileHeight;
+    
     int tileWidth  = width/cols;
 
+    // Maximum distance that a tab can extend outside the original image section
+    // Used to calculate how much "extra" space in the image to include in each tile,
+    // so that the tabs can be "cut out"
     int hMaxTabLength = (int) (tileHeight * TAB_LENGTH_PERCENTAGE); // Left/right faces
     int vMaxTabLength = (int) (tileWidth * TAB_LENGTH_PERCENTAGE);  // Top/bottom faces
     
-    //temp
+    // Tabs are not currently implemented. Until tabs are implemented, these are set to 0.
     hMaxTabLength = 0;
     vMaxTabLength = 0;
-
-    System.out.println(String.format("Height: %d", height));
-    System.out.println(String.format("Width:  %d", width));
-    System.out.println(String.format("rows:   %d", rows));
-    System.out.println(String.format("cols:   %d", cols));
-        
+    
     int w = tileWidth+2*hMaxTabLength;
     int h = tileHeight+2*vMaxTabLength;
     
+    Puzzle puzzle = new Puzzle(description, rows, cols);
+    
+    // Loop through each row and column, and for each, construct a new PuzzleTile
+    // with the appropriate subimage, and add it to the Puzzle.
     for (int r = 0; r < rows; r++)
     {
+      // Calculate the expected top position of the tile
       int y = r*tileHeight-vMaxTabLength;
-      if (y < 0) y = 0;
-      if (y > height - h) y = height - h;
+      
+      // Prevent edge tiles from extending above the available image
+      if (y < 0)
+        y = 0;
+      
+      // Prevent edge tiles from extending below the available image
+      if (y > height - h)
+        y = height - h;
       
       for (int c = 0; c < cols; c++)
       {
+        // Calculate the expected left position of the tile
         int x = c*tileWidth-hMaxTabLength;
-        if (x < 0) x = 0;
-        if (x > width - w) x = width - w;
         
-        PuzzleTile tile = new PuzzleTile(r, c, tileHeight, tileWidth, image.getSubimage(x, y, w, h));
+        // Prevent edge tiles from extending left of the available image
+        if (x < 0)
+          x = 0;
+        
+        // Prevent edge tiles from extending right of the available image
+        if (x > width - w)
+          x = width - w;
+        
+        // Construct and add the tile
+        PuzzleTile tile = new PuzzleTile(r, c, tileHeight, tileWidth,
+            image.getSubimage(x, y, w, h));
         puzzle.add(tile);
       }
     }
@@ -111,20 +128,13 @@ public class PuzzleFactory
    * to result in square tiles.
    *
    * @param image       The BufferedImage
-   * @param tabWidth    The distance each "tab" should protrude from the tile
    * @param description The name or description associated with the puzzle
    * @param rows        The number of rows
    * @return            The Puzzle
    */
-  public Puzzle createPuzzle(BufferedImage image, String description, int rows)
+  public Puzzle createPuzzle(final BufferedImage image, final String description, final int rows)
   {
-    int height = image.getHeight();
-    int width  = image.getWidth();
-    
-    int tileHeight = height/rows;
-    int cols = width/tileHeight;
-    
-    return createPuzzle(image, description, rows, cols);
+    return createPuzzle(image, description, rows, -1);
   }
   
   /**
@@ -136,7 +146,8 @@ public class PuzzleFactory
    * @param cols         The number of columns
    * @return             The Puzzle
    */
-  public Puzzle createPuzzle(Image image, String description, int rows, int cols)
+  public Puzzle createPuzzle(final Image image, final String description, 
+      final int rows, final int cols)
   {
     BufferedImage bi;
 
@@ -155,13 +166,9 @@ public class PuzzleFactory
    * @param rows         The number of rows
    * @return             The Puzzle
    */
-  public Puzzle createPuzzle(Image image, String description, int rows)
+  public Puzzle createPuzzle(final Image image, final String description, final int rows)
   {
-    BufferedImage bi;
-
-    //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
-    bi = imageFactory.createBufferedImage(image, 4);
-    return createPuzzle(bi, description, rows);
+    return createPuzzle(image, description, rows, -1);
   }
 
   /**
@@ -174,20 +181,11 @@ public class PuzzleFactory
    * @param cols         The number of columns
    * @return             The Puzzle
    */
-  public Puzzle createPuzzle(String name, String description, int rows, int cols)
+  public Puzzle createPuzzle(final String name, final String description, 
+      final int rows, final int cols) throws IOException
   {
-    BufferedImage          bi;
-
-    bi = null;
-    
-    try
-    {
-      bi = ImageIO.read(new File(name));
-    }
-    catch (IOException io)
-    {
-      bi = null;
-    }
+    BufferedImage bi;
+    bi = ImageIO.read(new File(name));
     
     return createPuzzle(bi, description, rows, cols);
   }
@@ -201,26 +199,12 @@ public class PuzzleFactory
    * @param name         The name of the file/resource
    * @param description  The name or description associated with the puzzle
    * @param rows         The number of rows
-   * @param cols         The number of columns
    * @return             The Puzzle
    */
-  public Puzzle createPuzzle(String name, String description, int rows)
+  public Puzzle createPuzzle(final String name, final String description, final int rows) 
+      throws IOException
   {
-    BufferedImage bi;
-    //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
-
-    bi = null;
-    
-    try
-    {
-      bi = ImageIO.read(new File(name));
-    }
-    catch (IOException io)
-    {
-      bi = null;
-    }
-    
-    return createPuzzle(bi, description, rows);
+    return createPuzzle(name, description, rows, -1);
   }
   
   /**
@@ -235,22 +219,13 @@ public class PuzzleFactory
    * @param dimension    The dimension of the area to fit to
    * @return             The Puzzle
    */
-  public Puzzle createPuzzle(String name, String description, int rows, int cols, Dimension dimension)
+  public Puzzle createPuzzle(final String name, final String description, 
+      final int rows, final int cols, final Dimension dimension) throws IOException
   {
     BufferedImage bi;
-    //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
-
-    bi = null;
+    bi = ImageIO.read(new File(name));
     
-    try
-    {
-      bi = ImageIO.read(new File(name));
-    }
-    catch (IOException io)
-    {
-      bi = null;
-    }
-    
+    // If the image is too big to fit comfortably in the window, resize it
     Image image = null;
     if (bi.getHeight() > dimension.height)
     {
@@ -282,37 +257,9 @@ public class PuzzleFactory
    * @param dimension    The dimension of the area to fit to
    * @return             The Puzzle
    */
-  public Puzzle createPuzzle(String name, String description, int rows, Dimension dimension)
+  public Puzzle createPuzzle(final String name, final String description, 
+      final int rows, final Dimension dimension) throws IOException
   {
-    BufferedImage bi;
-    //Channels has to be 4 for ARGB to allow for cutting out the "tabs" and "blanks"
-
-    bi = null;
-    
-    try
-    {
-      bi = ImageIO.read(new File(name));
-    }
-    catch (IOException io)
-    {
-      bi = null;
-    }
-    
-    Image image = null;
-    if (bi.getHeight() > dimension.height)
-    {
-      image = bi.getScaledInstance(-1, dimension.height, 0);
-      
-      if (image.getWidth(null) > dimension.width)
-        image = image.getScaledInstance(dimension.width, -1, 0);
-    }
-    else if (bi.getWidth() > dimension.width)
-      image = bi.getScaledInstance(dimension.width, -1, 0);
-      
-    
-    if (image == null)
-      return createPuzzle(bi, description, rows);
-    else
-      return createPuzzle(image, description, rows);
+    return createPuzzle(name, description, rows, -1, dimension);
   }
 }

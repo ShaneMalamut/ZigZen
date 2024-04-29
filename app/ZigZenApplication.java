@@ -1,13 +1,10 @@
 package app;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,29 +20,45 @@ import javax.swing.JTextField;
 import gui.PuzzleBoard;
 import io.ResourceFinder;
 import puzzlePieces.Puzzle;
-import puzzlePieces.io.PuzzleFactory;
-import puzzlePieces.io.PuzzleReader;
+import puzzlePieces.PuzzleFactory;
 import resources.Marker;
-import visual.VisualizationView;
-import visual.statik.sampled.ImageFactory;
 
+/**
+ * An application that simulates a jigsaw puzzle.
+ * 
+ * @author Shane Malamut, James Madison University
+ * @version 1.0
+ *
+ *          This work complies with the JMU Honor Code.
+ */
 public class ZigZenApplication extends JApplication implements ActionListener
 {
   public static final int WIDTH  = 1024;
   public static final int HEIGHT = 768;
-
-  protected static final String ABOUT = "About";
-  protected static final String LOAD = "Load";
-  protected static final String ROWS = "Rows";
-
-  private static final Color BACKGROUND_COLOR = new Color(218, 204, 230);
   
-  private JButton aboutButton, loadButton;
-  private JTextField fileField;
-  private JTextField rowsField;
-  private JTextField colsField;
+  protected static final int    DEFAULT_ROWS         = 4;
+  protected static final int    DEFAULT_COLS         = 0;
+  protected static final String DEFAULT_PUZZLE       = "StarryNight.jpg";
+  protected static final String DEFAULT_PUZZLE_DESC  = "Starry Night";
+  protected static final String UNTITLED_PUZZLE_DESC = "Untitled Puzzle";
+  
+  protected static final String ABOUT   = "About";
+  protected static final String ERROR   = "Error";
+  protected static final String LOAD    = "Load";
+  protected static final String ROWS    = "Rows";
+  protected static final String WARNING = "Warning";
+  
+  protected static final String WARNING_TEXT = 
+      "Invalid input for %s field. The default value will be used instead.";
+  
+  protected static final Color BACKGROUND_COLOR = new Color(218, 204, 230);
+  
+  private JButton     aboutButton, loadButton;
+  private JTextField  fileField;
+  private JTextField  rowsField;
+  private JTextField  colsField;
   private PuzzleBoard puzzleBoard;
-  private String aboutText;
+  private String      aboutText;
   
   /**
    * Constructor.
@@ -98,7 +111,7 @@ public class ZigZenApplication extends JApplication implements ActionListener
   protected void handleAbout()
   {
     JOptionPane.showMessageDialog(getGUIComponent(), 
-        String.format(aboutText, aboutText), ABOUT, JOptionPane.INFORMATION_MESSAGE);
+        aboutText, ABOUT, JOptionPane.INFORMATION_MESSAGE);
   }
   
   /**
@@ -110,9 +123,10 @@ public class ZigZenApplication extends JApplication implements ActionListener
     String rows     = rowsField.getText();
     String cols     = colsField.getText();
     Puzzle puzzle = null;
-    int rowNum = 4;
-    int colNum = 0;
+    int rowNum = DEFAULT_ROWS;
+    int colNum = DEFAULT_COLS;
     
+    // Attempt to parse the rows field as an int
     if (rows.length() > 0)
     {
       try
@@ -121,10 +135,12 @@ public class ZigZenApplication extends JApplication implements ActionListener
       }
       catch (NumberFormatException nfe)
       {
-        rowNum = 4;
+        JOptionPane.showMessageDialog(getGUIComponent(), 
+            String.format(WARNING_TEXT, "rows"), WARNING, JOptionPane.WARNING_MESSAGE);
       }
     }
     
+    // Attempt to parse the columns field as an int
     if (cols.length() > 0)
     {
       try
@@ -133,18 +149,18 @@ public class ZigZenApplication extends JApplication implements ActionListener
       }
       catch (NumberFormatException nfe)
       {
-        colNum = 0;
+        JOptionPane.showMessageDialog(getGUIComponent(), 
+            String.format(WARNING_TEXT, "columns"), WARNING, JOptionPane.WARNING_MESSAGE);
       }
     }
     
     if (fileName.length() == 0)
     {
+      // Read default puzzle 
       PuzzleFactory pf = new PuzzleFactory();
-      System.out.println("Reading example puzzle");
-      
       BufferedImage image = null;
       ResourceFinder rf = ResourceFinder.createInstance(new Marker());
-      InputStream   is = rf.findInputStream("StarryNight.jpg");
+      InputStream   is = rf.findInputStream(DEFAULT_PUZZLE);
       
       // Attempt to get the image
       if (is != null)
@@ -161,34 +177,41 @@ public class ZigZenApplication extends JApplication implements ActionListener
       }
       
       if (colNum > 0)
-        puzzle = pf.createPuzzle(image, "Starry Night", rowNum, colNum);
+        puzzle = pf.createPuzzle(image, DEFAULT_PUZZLE_DESC, rowNum, colNum);
       else
-        puzzle = pf.createPuzzle(image, "Starry Night", rowNum);
+        puzzle = pf.createPuzzle(image, DEFAULT_PUZZLE_DESC, rowNum);
     }
     else
     {
-      try
+      if (isImageFile(fileName))
       {
-        BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-        if (isImageFile(fileName))
+        try
         {
           PuzzleFactory pf = new PuzzleFactory();
           
+          // In the future, the user should be able to enter a description for their puzzle,
+          // which would be used in place of UNTITLED_PUZZLE_DESC.
+          // The description would act as a label to identify the puzzle with, and would be
+          // the default file name when saving the puzzle (once saving and loading is implemented).
           if (colNum > 0)
-            puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", rowNum, colNum);
+            puzzle = pf.createPuzzle(fileName, UNTITLED_PUZZLE_DESC, rowNum, colNum);
           else
-            puzzle = pf.createPuzzle(fileName, "Untitled Puzzle", rowNum);
+            puzzle = pf.createPuzzle(fileName, UNTITLED_PUZZLE_DESC, rowNum);
         }
-        else
+        catch (IOException ioe)
         {
-          puzzle = PuzzleReader.read(br);
+          JOptionPane.showMessageDialog(getGUIComponent(), 
+              "There was a problem reading " + fileName,
+              ERROR, JOptionPane.ERROR_MESSAGE);
+          return;
         }
       }
-      catch (IOException ioe)
+      else
       {
         JOptionPane.showMessageDialog(getGUIComponent(), 
-            "There was a problem reading " + fileName,
-            "Error", JOptionPane.ERROR_MESSAGE);
+            "Missing or invalid file extension: " + fileName,
+            ERROR, JOptionPane.ERROR_MESSAGE);
+        return;
       }
     }
     

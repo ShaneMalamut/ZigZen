@@ -1,81 +1,105 @@
 package puzzlePieces.visual;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class PuzzleCompositeContent implements PuzzleComponentContent
+/**
+ * A composite of PuzzleTileContent objects.
+ * 
+ * @author Shane Malamut, James Madison University
+ * @version 1.0
+ * 
+ *          This work complies with the JMU Honor Code.
+ */
+public class PuzzleCompositeContent implements Iterable<PuzzleTileContent>
 {
-  List<PuzzleComponentContent> components;
+  private List<PuzzleTileContent> tiles;
   
-  public PuzzleCompositeContent(PuzzleComponentContent root)
+  /**
+   * Constructor.
+   * @param root The first tile of the composite
+   */
+  public PuzzleCompositeContent(final PuzzleTileContent root)
   {
-    components = new ArrayList<PuzzleComponentContent>();
-    components.add(root);
+    tiles = new ArrayList<PuzzleTileContent>();
+    tiles.add(root);
   }
   
-  public void add(PuzzleComponentContent component)
+  /**
+   * Copy Constructor.
+   * @param original The composite to copy from
+   */
+  public PuzzleCompositeContent(final PuzzleCompositeContent original)
   {
-    component.setComposite(this);
-    components.add(component);
+    tiles = new ArrayList<PuzzleTileContent>();
+    tiles.addAll(original.getTiles());
+  }
+  
+  /**
+   * Add a tile to the composite.
+   * @param tile The tile to add
+   */
+  public void add(final PuzzleTileContent tile)
+  {
+    tile.setComposite(this);
+    tiles.add(tile);
     alignConnections();
   }
   
-  public void addAll(PuzzleCompositeContent other)
+  /**
+   * Add all the tiles from another composite.
+   * @param other The other composite
+   */
+  public void addAll(final PuzzleCompositeContent other)
   {
-    for (PuzzleComponentContent component : other.getComponents())
+    // Tell each tile that this is now their composite
+    for (PuzzleTileContent tile : other.getTiles())
     {
-      component.setComposite(this);
+      tile.setComposite(this);
     }
     
-    components.addAll(other.getComponents());
+    // Add the tiles to this composite's list
+    tiles.addAll(other.getTiles());
     alignConnections();
   }
   
-  @Override
-  public void alignConnections()
+  /**
+   * Align the connections of the composite using the original tile as the root.
+   */
+  private void alignConnections()
   {
-    PuzzleComponentContent root = components.get(0);
-    alignConnections(root);
+    alignConnections(tiles.get(0));
   }
   
-  public void alignConnections(PuzzleComponentContent root)
+  /**
+   * Recursively align the connections of the composite, starting at a given root.
+   * @param root
+   */
+  public void alignConnections(final PuzzleTileContent root)
   {
+    // Check that the given tile is actually part of this composite
     if (root.getComposite() != this)
-    {
       return;
-    }
     
-    for (PuzzleComponentContent component : components)
+    // Notify each tile that a recursive alignment process is beginning
+    for (PuzzleTileContent tile : tiles)
     {
-      component.observeAlignment();
+      tile.observeAlignment();
     }
     
+    // Begin the process at the given root
     root.alignConnections();
   }
   
-  protected List<PuzzleComponentContent> getComponents()
+  protected List<PuzzleTileContent> getTiles()
   {
-    return components;
+    return tiles;
   }
 
   @Override
-  public void observeAlignment()
+  public Iterator<PuzzleTileContent> iterator()
   {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void setComposite(PuzzleCompositeContent puzzleCompositeContent)
-  {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public PuzzleCompositeContent getComposite()
-  {
-    // TODO Auto-generated method stub
-    return null;
+    return tiles.iterator();
   }
 }

@@ -1,6 +1,6 @@
 package puzzlePieces.visual;
 
-import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
@@ -10,21 +10,33 @@ import visual.dynamic.described.RuleBasedSprite;
 import visual.statik.TransformableContent;
 
 /**
- * Presents the information in a PuzzleTile object.
+ * A PuzzleTile that knows how to render itself,
+ * knows how to interact with the mouse cursor,
+ * and knows how to interact with other tiles.
  * 
  * @author Shane Malamut, James Madison University
  * @version 1.0
- *
+ * 
  *          This work complies with the JMU Honor Code.
  */
-public class PuzzleTileContent extends    RuleBasedSprite 
-                               implements MouseMotionListener, 
-                                          PuzzleComponentContent
+public class PuzzleTileContent extends RuleBasedSprite implements MouseMotionListener
 {
-  private double       left, top;
+  private static final int DEFAULT_WIGGLE_ROOM = 10;
+  
+  private boolean aligned;
+  private boolean held;
+  private boolean hover;
+  
+  private boolean joinedNorth;
+  private boolean joinedSouth;
+  private boolean joinedEast;
+  private boolean joinedWest;
+  
+  private double  left, top;
+  private double  relativeLeft;
+  private double  relativeTop;
+  
   private PuzzleTile   tile;
-  private boolean      hover;
-  private boolean      held;
   private PuzzleCursor cursor;
   
   private PuzzleTileContent north;
@@ -34,52 +46,65 @@ public class PuzzleTileContent extends    RuleBasedSprite
   
   private PuzzleCompositeContent composite;
   
-  private boolean joinedNorth;
-  private boolean joinedSouth;
-  private boolean joinedEast;
-  private boolean joinedWest;
-  
-  private boolean aligned;
-
-  public PuzzleTileContent(TransformableContent content, PuzzleTile tile)
+  /**
+   * Constructor.
+   * @param content The TransformableContent containing the tile's image
+   * @param tile The PuzzleTile being represented
+   */
+  public PuzzleTileContent(final TransformableContent content, final PuzzleTile tile)
   {
     super(content);
     
     this.tile = tile;
+    
     left = tile.getLeft();
-    top = tile.getTop();
+    top  = tile.getTop();
     setLocation(left, top);
     
     hover = false;
     held  = false;
     
+    relativeLeft = 0;
+    relativeTop  = 0;
+    
     north = null;
     south = null;
-    east =  null;
-    west =  null;
+    east  = null;
+    west  = null;
     
     composite = null;
     
     joinedNorth = false;
     joinedSouth = false;
-    joinedEast =  false;
-    joinedWest =  false;
+    joinedEast  = false;
+    joinedWest  = false;
     
     aligned = true;
   }
 
+  /**
+   * Get the PuzzleCompositeContent, or null if this tile is not in a composite.
+   * @return The PuzzleCompositeContent, or null
+   */
   public PuzzleCompositeContent getComposite()
   {
     return composite;
   }
   
-  @Override
-  public void setComposite(PuzzleCompositeContent composite)
+  /**
+   * Set the PuzzleCompositeContent.
+   * @param composite The PuzzleCompositeContent that this tile is a part of
+   */
+  public void setComposite(final PuzzleCompositeContent composite)
   {
     this.composite = composite;
   }
   
-  public void setCursor(PuzzleCursor cursor)
+  /**
+   * Set the Cursor.
+   * @param cursor The Cursor
+   */
+  public void setCursor(final PuzzleCursor cursor)
   {
     this.cursor = cursor;
   }
@@ -88,131 +113,151 @@ public class PuzzleTileContent extends    RuleBasedSprite
    * When the tile is clicked and dragged.
    */
   @Override
-  public void mouseDragged(MouseEvent e)
+  public void mouseDragged(final MouseEvent e)
   {
     if (hover)
     {
-      cursor.grab(this);
+      cursor.grab(this, e);
     }
     
     if (held)
     {
-      left = (double)e.getX() - tile.getWidth()/2;
-      top  = (double)e.getY() - tile.getHeight()/2;
+      left = (double)e.getX() - relativeLeft;
+      top  = (double)e.getY() - relativeTop;
     }
   }
 
   /**
-   * When the tile is hovered over. Should have a glow effect.
+   * When the tile is hovered over but not being clicked.
    */
   @Override
-  public void mouseMoved(MouseEvent e)
+  public void mouseMoved(final MouseEvent e)
   {
-    hover = (e.getX() > left && e.getX() < left + tile.getWidth() && 
-             e.getY() > top  && e.getY() < top + tile.getHeight());
+    // Detect if the mouse cursor is located within the bounds of the tile
+    hover = (e.getX() > left && e.getX() < left + tile.getWidth()
+      && e.getY() > top  && e.getY() < top + tile.getHeight());
     
+    // Check if the user has finished dragging the tile.
     if (hover && held)
-    {
       cursor.release();
-    }
   }
   
-  public void setPosition(double left, double top)
+  /**
+   * Determine and set the relative position from the top-left corner to the cursor.
+   * @param x The x-coordinate location of the cursor
+   * @param y The y-coordinate location of the cursor
+   */
+  public void setRelativePosition(final double x, final double y)
   {
-    this.left = left;
-    this.top  = top;
+    relativeLeft = x - this.left;
+    relativeTop  = y - this.top;
   }
   
+  /**
+   * Set the position.
+   * @param l The left-side position
+   * @param t The top-side position
+   */
+  public void setPosition(final double l, final double t)
+  {
+    left = l;
+    top  = t;
+  }
+  
+  /**
+   * Notify that this tile is being held by the cursor.
+   */
   public void grab()
   {
     held = true;
   }
   
+  /**
+   * Notify that this tile is no longer being held by the cursor, and notify its neighbors.
+   */
   public void release()
   {
     held = false;
     notifyNeighbors();
-    if (composite != null)
-    {
-      composite.alignConnections(this);
-    }
   }
   
+  /**
+   * Notify neighbors that the tile has been released, 
+   * so that they can check if their positions are close enough for a connection to be made.
+   */
   public void notifyNeighbors()
   {
     if (north != null)
-      north.observePosition(left, top, 2);
+      notifyNeighbor(north);
     if (south != null)
-      south.observePosition(left, top, 0);
+      notifyNeighbor(south);
     if (east != null)
-      east.observePosition(left, top, 3);
+      notifyNeighbor(east);
     if (west != null)
-      west.observePosition(left, top, 1);
+      notifyNeighbor(west);
   }
   
-  public void observePosition(double left, double top, int direction)
+  private void notifyNeighbor(final PuzzleTileContent neighbor)
   {
-    double hDiff      = this.left - left;
-    double vDiff      = this.top - top;
+    if (neighbor != null)
+      neighbor.observePosition(this);
+  }
+  
+  /**
+   * Check if the given tile is close enough and positioned correctly to connect.
+   * @param neighbor The tile to check
+   */
+  public void observePosition(final PuzzleTileContent neighbor)
+  {
+    Point p = neighbor.getPosition();
+    
+    double hDiff      = left - p.x;
+    double vDiff      = top - p.y;
     double tileWidth  = tile.getWidth();
     double tileHeight = tile.getHeight();
-    double wiggleRoom = 10;
     
-    //System.out.println(String.format("%f %f %f", hDiff, tileWidth, Math.abs(hDiff)));
-    switch (direction)
+    // In the future, "wiggle room" should be configurable by the user for accessibility purposes
+    double wiggleRoom = DEFAULT_WIGGLE_ROOM;
+    
+    if (neighbor == north && !joinedNorth && Math.abs(hDiff) < wiggleRoom
+        && vDiff > tileHeight - wiggleRoom && vDiff < tileHeight + wiggleRoom)
     {
-      case 0: // North of me
-        if (!joinedNorth && Math.abs(hDiff) < wiggleRoom
-            && vDiff > tileHeight - wiggleRoom && vDiff < tileHeight + wiggleRoom)
-        {
-          // connect with north
-          joinNorth();
-          north.joinSouth();
-          System.out.println("Connect with north");
-          join(north);
-        }
-        break;
-      case 1: // East of me
-        if (!joinedEast && Math.abs(vDiff) < wiggleRoom
-            && -hDiff > tileWidth - wiggleRoom && -hDiff < tileWidth + wiggleRoom)
-        {
-          // connect with east
-          joinEast();
-          east.joinWest();
-          System.out.println("Connect with east");
-          join(east);
-        }
-        break;
-      case 2: // South of me
-        if (!joinedSouth && Math.abs(hDiff) < wiggleRoom
-            && -vDiff > tileHeight - wiggleRoom && -vDiff < tileHeight + wiggleRoom)
-        {
-          // connect with south
-          joinSouth();
-          south.joinNorth();
-          System.out.println("Connect with south");
-          join(south);
-        }
-        break;
-      case 3: // West of me
-        if (!joinedWest && Math.abs(vDiff) < wiggleRoom
-            && hDiff > tileWidth - wiggleRoom && hDiff < tileWidth + wiggleRoom)
-        {
-          // connect with west
-          joinWest();
-          west.joinEast();
-          System.out.println("Connect with west");
-          join(west);
-        }
-        break;
-      default:
-        break;
+      // connect with north
+      joinNorth();
+      north.joinSouth();
+      join(north);
+    }
+    
+    if (neighbor == south && !joinedSouth && Math.abs(hDiff) < wiggleRoom
+        && -vDiff > tileHeight - wiggleRoom && -vDiff < tileHeight + wiggleRoom)
+    {
+      // connect with south
+      joinSouth();
+      south.joinNorth();
+      join(south);
+    }
+    
+    if (neighbor == east && !joinedEast && Math.abs(vDiff) < wiggleRoom
+        && -hDiff > tileWidth - wiggleRoom && -hDiff < tileWidth + wiggleRoom)
+    {
+      // connect with east
+      joinEast();
+      east.joinWest();
+      join(east);
+    }
+
+    if (neighbor == west && !joinedWest && Math.abs(vDiff) < wiggleRoom
+        && hDiff > tileWidth - wiggleRoom && hDiff < tileWidth + wiggleRoom)
+    {
+      // connect with west
+      joinWest();
+      west.joinEast();
+      join(west);
     }
   }
   
-  public void join(PuzzleTileContent neighbor)
+  private void join(final PuzzleTileContent neighbor)
   {
-    System.out.println("Joining");
     if (composite == null && neighbor.getComposite() == null)
     {
       // No composites involved
@@ -236,24 +281,40 @@ public class PuzzleTileContent extends    RuleBasedSprite
     }
   }
   
-  public void setNorth(PuzzleTileContent tile)
+  /**
+   * Set a PuzzleTileContent to be the north neighbor.
+   * @param t The PuzzleTileContent
+   */
+  public void setNorth(final PuzzleTileContent t)
   {
-    north = tile;
+    north = t;
   }
   
-  public void setSouth(PuzzleTileContent tile)
+  /**
+   * Set a PuzzleTileContent to be the south neighbor.
+   * @param t The PuzzleTileContent
+   */
+  public void setSouth(final PuzzleTileContent t)
   {
-    south = tile;
+    south = t;
   }
   
-  public void setEast(PuzzleTileContent tile)
+  /**
+   * Set a PuzzleTileContent to be the east neighbor.
+   * @param t The PuzzleTileContent
+   */
+  public void setEast(final PuzzleTileContent t)
   {
-    east = tile;
+    east = t;
   }
-  
-  public void setWest(PuzzleTileContent tile)
+
+  /**
+   * Set a PuzzleTileContent to be the west neighbor.
+   * @param t The PuzzleTileContent
+   */
+  public void setWest(final PuzzleTileContent t)
   {
-    west = tile;
+    west = t;
   }
   
   protected void joinNorth()
@@ -277,12 +338,15 @@ public class PuzzleTileContent extends    RuleBasedSprite
   }
   
   @Override
-  public void handleTick(int arg0)
+  public void handleTick(final int arg0)
   {
     setLocation(left, top);
   }
 
-  @Override
+  /**
+   * Recursive method that tells each neighbor to align itself with the edge of this tile
+   * if not already aligned, and then to do the same with each of its neighbors.
+   */
   public void alignConnections()
   {
     double tileHeight = tile.getHeight();
@@ -309,20 +373,33 @@ public class PuzzleTileContent extends    RuleBasedSprite
     }
   }
   
-  protected void alignConnections(double left, double top)
+  protected void alignConnections(final double l, final double t)
   {
     if (!aligned)
     {
-      setPosition(left, top);
+      setPosition(l, t);
       aligned = true;
       alignConnections();
     }
   }
   
-  @Override
+  /**
+   * Observe that the alignment process is beginning for the composite.
+   */
   public void observeAlignment()
   {
     aligned = false;
+  }
+  
+  /**
+   * get the position of the PuzzleTileContent as a Point.
+   * @return The Point located at the top left of the tile.
+   */
+  public Point getPosition()
+  {
+    Point p = new Point();
+    p.setLocation(left, top);
+    return p;
   }
 
 }
