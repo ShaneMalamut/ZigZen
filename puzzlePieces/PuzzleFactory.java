@@ -92,10 +92,12 @@ public class PuzzleFactory
       int y = r*tileHeight-vMaxTabLength;
       
       // Prevent edge tiles from extending above the available image
+      // (Not relevant until tabs are implemented)
       if (y < 0)
         y = 0;
       
       // Prevent edge tiles from extending below the available image
+   // (Not relevant until tabs are implemented)
       if (y > height - h)
         y = height - h;
       
@@ -105,10 +107,12 @@ public class PuzzleFactory
         int x = c*tileWidth-hMaxTabLength;
         
         // Prevent edge tiles from extending left of the available image
+        // (Not relevant until tabs are implemented)
         if (x < 0)
           x = 0;
         
         // Prevent edge tiles from extending right of the available image
+        // (Not relevant until tabs are implemented)
         if (x > width - w)
           x = width - w;
         
